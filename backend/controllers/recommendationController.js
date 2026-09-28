@@ -1,0 +1,119 @@
+const Recommendation = require("../models/Recommendation");
+const Farm = require("../models/Farm");
+const Crop = require("../models/Crop");
+const Fertilizer = require("../models/Fertilizer");
+const { solveFertilizerMix } = require("../utils/lpSolver");
+const { classifyRainfall, fetchRainfallMm } = require("../utils/rainfall");
+
+exports.generateRecommendation = async (req, res) => {
+  try {
+    const { farmId, cropId, rainfallMmOverride } = req.body;
+    if (!farmId || !cropId) {
+      return res.status(400).json({ message: "farmId and cropId are required" });
+    }
+
+    const farm = await Farm.findById(farmId);
+    if (!farm) return res.status(404).json({ message: "Farm not found" });
+    if (String(farm.farmer) !== String(req.user._id) && req.user.role === "farmer") {
+      return res.status(403).json({ message: "You do not have access to this farm" });
+    }
+
+    const crop = await Crop.findById(cropId);
+    if (!crop || !crop.isActive) {
+      return res.status(404).json({ message: "Crop not found" });
+    }
+
+    const fertilizers = await Fertilizer.find({ isActive: true });
+    if (fertilizers.length === 0) {
+      return res.status(400).json({ message: "No active fertilizers configured in the system" });
+    }
+
+    const rainfallMm = await fetchRainfallMm(farm.region, rainfallMmOverride);
+    const { class: rainfallClass, multiplier } = classifyRainfall(rainfallMm);
+
+    const adjustedRequirement = {
+      n: Math.round(crop.npkRequirementKgPerHa.n * multiplier * 100) / 100,
+      p: crop.npkRequirementKgPerHa.p,
+      k: crop.npkRequirementKgPerHa.k,
+    };
+
+    const scaledRequirement = {
+      n: Math.round(adjustedRequirement.n * farm.areaHectares * 100) / 100,
+      p: Math.round(adjustedRequirement.p * farm.areaHectares * 100) / 100,
+      k: Math.round(adjustedRequirement.k * farm.areaHectares * 100) / 100,
+    };
+
+    const solverResult = solveFertilizerMix(fertilizers, scaledRequirement);
+
+    if (solverResult.status === "infeasible") {
+      return res.status(422).json({
+        message:
+          "No feasible fertilizer combination was found for this crop with the currently " +
+          "configured fertilizers. Consider adding fertilizers with higher nutrient content.",
+        rainfallClass,
+        adjustedRequirementKgPerHa: adjustedRequirement,
+      });
+    }
+
+    const recommendation = await Recommendation.create({
+      farmer: req.user.role === "farmer" ? req.user._id : farm.farmer,
+      farm: farm._id,
+      crop: crop._id,
+      rainfallClass,
+      nitrogenLeachingMultiplier: multiplier,
+      adjustedRequirementKgPerHa: adjustedRequirement,
+      fertilizerMix: solverResult.mix.map((m) => ({
+        fertilizer: m.fertilizerId,
+        fertilizerName: m.fertilizerName,
+        quantityKg: m.quantityKg,
+        costLKR: m.costLKR,
+      })),
+      totalCostLKR: solverResult.totalCostLKR,
+      solverStatus: solverResult.status,
+      status: "pending_review",
+    });
+
+    res.status(201).json({ recommendation });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to generate recommendation", error: err.message });
+  }
+};
+
+exports.myRecommendations = async (req, res) => {
+  const recs = await Recommendation.find({ farmer: req.user._id })
+    .populate("crop", "name")
+    .populate("farm", "farmName region areaHectares")
+    .sort({ createdAt: -1 });
+  res.json({ recommendations: recs });
+};
+
+exports.pendingRecommendations = async (req, res) => {
+  const recs = await Recommendation.find({ status: "pending_review" })
+    .populate("crop", "name")
+    .populate("farmer", "name email region")
+    .populate("farm", "farmName region areaHectares")
+    .sort({ createdAt: 1 });
+  res.json({ recommendations: recs });
+};
+
+exports.reviewRecommendation = async (req, res) => {
+  try {
+    const { decision, reviewNotes } = req.body;
+    if (!["approved", "rejected"].includes(decision)) {
+      return res.status(400).json({ message: "decision must be 'approved' or 'rejected'" });
+    }
+
+    const recommendation = await Recommendation.findById(req.params.id);
+    if (!recommendation) return res.status(404).json({ message: "Recommendation not found" });
+
+    recommendation.status = decision;
+    recommendation.reviewedBy = req.user._id;
+    recommendation.reviewNotes = reviewNotes || "";
+    recommendation.reviewedAt = new Date();
+    await recommendation.save();
+
+    res.json({ recommendation });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to review recommendation", error: err.message });
+  }
+};
