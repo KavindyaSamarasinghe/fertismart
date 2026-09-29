@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 
 const formatCurrency = (amount) =>
   `Rs. ${Number(amount || 0).toLocaleString("en-LK", {
@@ -51,6 +52,55 @@ function SummaryCard({ label, value, description, icon, accent }) {
             {icon}
           </span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Compact cost-comparison bar chart: LP-optimized mix vs conventional
+// flat-rate compound baseline, for a single recommendation.
+function SavingsChart({ optimizedCost, baselineCost }) {
+  if (typeof baselineCost !== "number" || baselineCost <= 0) return null;
+
+  const data = [
+    { name: "Conventional (flat-rate compound)", cost: Math.round(baselineCost), fill: "#94A3B8" },
+    { name: "LP-Optimized (this recommendation)", cost: Math.round(optimizedCost), fill: "#14532D" },
+  ];
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Cost comparison
+      </p>
+      <div className="mt-2 h-32 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
+            <XAxis type="number" hide />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={150}
+              tick={{ fontSize: 11, fill: "#475569" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              formatter={(value) => formatCurrency(value)}
+              contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E2E8F0" }}
+            />
+            <Bar dataKey="cost" radius={[0, 6, 6, 0]} barSize={22}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.fill} />
+              ))}
+              <LabelList
+                dataKey="cost"
+                position="right"
+                formatter={(v) => formatCurrency(v)}
+                style={{ fontSize: 11, fill: "#334155", fontWeight: 600 }}
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
@@ -326,6 +376,12 @@ export default function OfficerDashboard() {
                             <span className="rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium capitalize text-amber-800">
                               Pending review
                             </span>
+
+                            {typeof rec.savingsPercent === "number" && rec.savingsPercent > 0 && (
+                              <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                                ↓ {rec.savingsPercent.toFixed(1)}% vs conventional
+                              </span>
+                            )}
                           </div>
 
                           <p className="mt-1 text-sm text-slate-600">
@@ -347,6 +403,11 @@ export default function OfficerDashboard() {
                         <p className="mt-1 text-xl font-bold tracking-tight text-[#14532D]">
                           {formatCurrency(rec.totalCostLKR)}
                         </p>
+                        {typeof rec.savingsLKR === "number" && rec.savingsLKR > 0 && (
+                          <p className="mt-1 text-xs font-medium text-emerald-700">
+                            Saves {formatCurrency(rec.savingsLKR)}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -437,6 +498,16 @@ export default function OfficerDashboard() {
                         </p>
                       </div>
                     </div>
+
+                    {/* Cost comparison chart */}
+                    {typeof rec.baselineCostLKR === "number" && rec.baselineCostLKR > 0 && (
+                      <div className="mt-6">
+                        <SavingsChart
+                          optimizedCost={rec.totalCostLKR}
+                          baselineCost={rec.baselineCostLKR}
+                        />
+                      </div>
+                    )}
 
                     {/* Fertilizer breakdown */}
                     <div className="mt-6">
