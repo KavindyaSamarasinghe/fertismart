@@ -29,18 +29,31 @@ const fertilizers = [
   { name: "Rock Phosphate", type: "Phosphorus", nutrientContentPercent: { n: 0, p: 30, k: 0 }, costPerKgLKR: 90 },
 ];
 
+async function upsertByName(Model, items, label) {
+  let created = 0;
+  let updated = 0;
+
+  for (const item of items) {
+    const result = await Model.findOneAndUpdate(
+      { name: item.name },
+      { $set: item },
+      { upsert: true, new: true, rawResult: true }
+    );
+    if (result.lastErrorObject?.upserted) created++;
+    else updated++;
+  }
+
+  console.log(`  ${label}: ${created} created, ${updated} updated (existing _ids preserved)`);
+}
+
 async function seed() {
   await connectDB();
 
-  console.log("Clearing existing Crop and Fertilizer collections...");
-  await Crop.deleteMany({});
-  await Fertilizer.deleteMany({});
+  console.log("Upserting crops (existing _ids preserved)...");
+  await upsertByName(Crop, crops, "Crops");
 
-  console.log("Inserting crops...");
-  await Crop.insertMany(crops);
-
-  console.log("Inserting fertilizers...");
-  await Fertilizer.insertMany(fertilizers);
+  console.log("Upserting fertilizers (existing _ids preserved)...");
+  await upsertByName(Fertilizer, fertilizers, "Fertilizers");
 
   console.log("Seeding demo user accounts...");
   const demoUsers = [
