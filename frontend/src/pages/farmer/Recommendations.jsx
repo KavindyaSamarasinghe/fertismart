@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 
 const STATUS_STYLES = {
   pending_review: "bg-amber-50 text-amber-700 border-amber-200",
@@ -37,6 +38,17 @@ const formatStatus = (status) =>
   (status || "pending_review")
     .replaceAll("_", " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
+
+// Mirrors backend/utils/rainfall.js RAINFALL_BANDS exactly, so the slider's
+// live label matches what the server will actually classify it as.
+const RAINFALL_BANDS = [
+  { class: "low", maxMm: 50, multiplier: 1.0, style: "bg-amber-50 text-amber-700 border-amber-200" },
+  { class: "moderate", maxMm: 150, multiplier: 1.1, style: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  { class: "heavy", maxMm: Infinity, multiplier: 1.2, style: "bg-blue-50 text-blue-700 border-blue-200" },
+];
+const classifyRainfallClient = (mm) =>
+  RAINFALL_BANDS.find((b) => mm <= b.maxMm) || RAINFALL_BANDS[RAINFALL_BANDS.length - 1];
+const SLIDER_MAX_MM = 250;
 
 function Icon({ name, className = "h-5 w-5" }) {
   const props = {
@@ -117,6 +129,55 @@ function SummaryCard({ icon, label, value, description }) {
   );
 }
 
+// Cost-comparison bar chart: LP-optimized mix vs conventional flat-rate
+// compound baseline, shown for a freshly generated recommendation result.
+function SavingsChart({ optimizedCost, baselineCost }) {
+  if (typeof baselineCost !== "number" || baselineCost <= 0) return null;
+
+  const data = [
+    { name: "Conventional (flat-rate compound)", cost: Math.round(baselineCost), fill: "#94A3B8" },
+    { name: "LP-Optimized (this recommendation)", cost: Math.round(optimizedCost), fill: "#145C3B" },
+  ];
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Cost comparison
+      </p>
+      <div className="mt-2 h-32 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ top: 4, right: 24, left: 4, bottom: 4 }}>
+            <XAxis type="number" hide />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={150}
+              tick={{ fontSize: 11, fill: "#475569" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              formatter={(value) => `Rs. ${formatCurrency(value)}`}
+              contentStyle={{ fontSize: 12, borderRadius: 8, borderColor: "#E2E8F0" }}
+            />
+            <Bar dataKey="cost" radius={[0, 6, 6, 0]} barSize={22}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.fill} />
+              ))}
+              <LabelList
+                dataKey="cost"
+                position="right"
+                formatter={(v) => `Rs. ${formatCurrency(v)}`}
+                style={{ fontSize: 11, fill: "#334155", fontWeight: 600 }}
+              />
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
 export default function Recommendations() {
   const [searchParams] = useSearchParams();
   const preselectedFarmId = searchParams.get("farmId") || "";
@@ -125,10 +186,13 @@ export default function Recommendations() {
   const [crops, setCrops] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
 
+  // rainfallMode: "auto" uses the server's live Open-Meteo fetch;
+  // "manual" sends rainfallMmOverride from the slider below.
   const [form, setForm] = useState({
     farmId: preselectedFarmId,
     cropId: "",
-    rainfallMmOverride: "",
+    rainfallMode: "auto",
+    rainfallMmOverride: 60,
   });
 
   const [loading, setLoading] = useState(false);
@@ -223,7 +287,7 @@ export default function Recommendations() {
       const payload = {
         farmId: form.farmId,
         cropId: form.cropId,
-        ...(form.rainfallMmOverride !== "" && {
+        ...(form.rainfallMode === "manual" && {
           rainfallMmOverride: Number(form.rainfallMmOverride),
         }),
       };
@@ -268,6 +332,8 @@ export default function Recommendations() {
   const selectedCrop = crops.find(
     (crop) => crop._id === form.cropId
   );
+
+  const liveBand = classifyRainfallClient(Number(form.rainfallMmOverride) || 0);
 
   return (
     <DashboardLayout
@@ -491,44 +557,98 @@ export default function Recommendations() {
 
               {/* Rainfall */}
               <div>
-                <label
-                  htmlFor="rainfallMmOverride"
-                  className="mb-2 block text-sm font-medium text-slate-700"
-                >
-                  Rainfall override
-                  <span className="ml-1 font-normal text-slate-400">
-                    (optional)
-                  </span>
-                </label>
-
-                <div className="relative">
-                  <input
-                    id="rainfallMmOverride"
-                    name="rainfallMmOverride"
-                    type="number"
-                    min="0"
-                    step="any"
-                    value={form.rainfallMmOverride}
-                    onChange={handleChange}
-                    placeholder="Leave blank to auto-fetch"
-                    className={`${inputClass} pr-14`}
-                  />
-                  <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
-                    mm
-                  </span>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Rainfall data source
+                  </label>
                 </div>
 
-                <div className="mt-2 flex items-start gap-2 text-xs leading-5 text-slate-500">
-                  <Icon
-                    name="cloud"
-                    className="mt-0.5 h-4 w-4 shrink-0"
-                  />
-                  <p>
-                    Enter a rainfall value to override the automatic
-                    value. Leave blank to use the configured
-                    rainfall-fetching behavior.
+                {/* Auto / Manual toggle */}
+                <div className="inline-flex w-full rounded-xl border border-slate-200 bg-slate-50 p-1">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, rainfallMode: "auto" }))
+                    }
+                    className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                      form.rainfallMode === "auto"
+                        ? "bg-white text-[#145C3B] shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      <Icon name="cloud" className="h-3.5 w-3.5" />
+                      Use live rainfall
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, rainfallMode: "manual" }))
+                    }
+                    className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold transition ${
+                      form.rainfallMode === "manual"
+                        ? "bg-white text-[#145C3B] shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    }`}
+                  >
+                    Manual override
+                  </button>
+                </div>
+
+                {form.rainfallMode === "auto" ? (
+                  <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-slate-500">
+                    <Icon name="cloud" className="mt-0.5 h-4 w-4 shrink-0" />
+                    Rainfall for your farm's region is fetched automatically
+                    from live weather data (past 5 days) when you generate a
+                    recommendation.
                   </p>
-                </div>
+                ) : (
+                  <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-slate-500">
+                        5-day rainfall
+                      </span>
+                      <span className="text-lg font-bold text-[#1C2D35]">
+                        {form.rainfallMmOverride} mm
+                      </span>
+                    </div>
+
+                    <input
+                      type="range"
+                      name="rainfallMmOverride"
+                      min={0}
+                      max={SLIDER_MAX_MM}
+                      step={5}
+                      value={form.rainfallMmOverride}
+                      onChange={handleChange}
+                      className="mt-3 w-full accent-[#145C3B]"
+                      aria-label="Rainfall override in millimetres"
+                    />
+
+                    <div className="mt-1 flex justify-between text-[10px] text-slate-400">
+                      <span>0mm</span>
+                      <span>{SLIDER_MAX_MM}mm+</span>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between rounded-lg bg-white px-3 py-2">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${liveBand.style}`}
+                      >
+                        {liveBand.class} rainfall
+                      </span>
+                      <span className="text-xs font-medium text-slate-500">
+                        N-leaching ×{liveBand.multiplier}
+                      </span>
+                    </div>
+
+                    <p className="mt-3 text-xs leading-5 text-slate-500">
+                      Drag to preview how rainfall affects the nitrogen
+                      leaching multiplier, then generate to see the resulting
+                      fertilizer mix and cost.
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="border-t border-slate-100 pt-5">
@@ -676,7 +796,7 @@ export default function Recommendations() {
                       </div>
                     </div>
 
-                    {/* Total cost */}
+                    {/* Total cost + savings */}
                     <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs text-slate-500">
@@ -685,6 +805,11 @@ export default function Recommendations() {
                         <p className="mt-1 text-xl font-bold text-[#145C3B]">
                           Rs. {formatCurrency(rec.totalCostLKR)}
                         </p>
+                        {typeof rec.savingsPercent === "number" && rec.savingsPercent > 0 && (
+                          <p className="mt-1 text-xs font-semibold text-emerald-700">
+                            ↓ {rec.savingsPercent.toFixed(1)}% vs conventional application
+                          </p>
+                        )}
                       </div>
 
                       <Link
@@ -726,13 +851,18 @@ export default function Recommendations() {
                 </div>
               </div>
 
-              <div>
+              <div className="sm:text-right">
                 <p className="text-xs text-slate-500">
                   Estimated total cost
                 </p>
                 <p className="mt-1 text-2xl font-bold text-[#145C3B]">
                   Rs. {formatCurrency(result.totalCostLKR)}
                 </p>
+                {typeof result.savingsLKR === "number" && result.savingsLKR > 0 && (
+                  <p className="mt-1 text-xs font-semibold text-emerald-700">
+                    Saves Rs. {formatCurrency(result.savingsLKR)} ({result.savingsPercent?.toFixed(1)}%)
+                  </p>
+                )}
               </div>
             </div>
 
@@ -757,6 +887,16 @@ export default function Recommendations() {
                   </p>
                 </div>
               </div>
+
+              {/* Cost comparison chart */}
+              {typeof result.baselineCostLKR === "number" && result.baselineCostLKR > 0 && (
+                <div className="mb-5">
+                  <SavingsChart
+                    optimizedCost={result.totalCostLKR}
+                    baselineCost={result.baselineCostLKR}
+                  />
+                </div>
+              )}
 
               <h4 className="mb-3 font-semibold text-[#1C2D35]">
                 Recommended fertilizer mix
