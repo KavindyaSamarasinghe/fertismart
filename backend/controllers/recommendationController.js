@@ -4,6 +4,11 @@ const Crop = require("../models/Crop");
 const Fertilizer = require("../models/Fertilizer");
 const { solveFertilizerMix } = require("../utils/lpSolver");
 const { classifyRainfall, fetchRainfallMm } = require("../utils/rainfall");
+const {
+  computeStraightFertilizerBaseline,
+  computeCompoundBaseline,
+  computeSavings,
+} = require("../utils/baselineComparison");
 
 exports.generateRecommendation = async (req, res) => {
   try {
@@ -55,6 +60,22 @@ exports.generateRecommendation = async (req, res) => {
       });
     }
 
+    // Baseline comparison: what unoptimized, conventional fertilizer
+    // application would have cost for the same nutrient requirement. The
+    // compound baseline (a single general-purpose fertilizer applied at a
+    // flat rate) is used as the primary comparison, since it best reflects
+    // typical practice without a decision-support tool. The straight-
+    // fertilizer baseline is also computed and included for completeness /
+    // discussion, but is not used for the stored savings figure, since it
+    // can coincide exactly with the LP optimum when straight fertilizers
+    // are already the cheapest source per nutrient in the catalogue.
+    const compoundBaseline = computeCompoundBaseline(fertilizers, scaledRequirement);
+    const straightBaseline = computeStraightFertilizerBaseline(fertilizers, scaledRequirement);
+
+    const { savingsLKR, savingsPercent } = compoundBaseline.feasible
+      ? computeSavings(solverResult.totalCostLKR, compoundBaseline.totalCostLKR)
+      : { savingsLKR: null, savingsPercent: null };
+
     const recommendation = await Recommendation.create({
       farmer: req.user.role === "farmer" ? req.user._id : farm.farmer,
       farm: farm._id,
@@ -70,10 +91,19 @@ exports.generateRecommendation = async (req, res) => {
       })),
       totalCostLKR: solverResult.totalCostLKR,
       solverStatus: solverResult.status,
+      baselineCostLKR: compoundBaseline.feasible ? compoundBaseline.totalCostLKR : null,
+      savingsLKR,
+      savingsPercent,
       status: "pending_review",
     });
 
-    res.status(201).json({ recommendation });
+    res.status(201).json({
+      recommendation,
+      baseline: {
+        compound: compoundBaseline,
+        straight: straightBaseline,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: "Failed to generate recommendation", error: err.message });
   }
