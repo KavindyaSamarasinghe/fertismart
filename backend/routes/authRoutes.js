@@ -1,13 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { register, login, getProfile } = require("../controllers/authController");
+const {
+  register,
+  login,
+  getProfile,
+  forgotPassword,
+  resetPassword,
+} = require("../controllers/authController");
 const { protect } = require("../middleware/auth");
 
 /**
  * @swagger
  * tags:
  *   name: Auth
- *   description: Farmer registration and login
+ *   description: Farmer registration, login and password reset
  */
 
 /**
@@ -61,6 +67,59 @@ router.post("/register", register);
  *         description: Invalid credentials
  */
 router.post("/login", login);
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *     summary: Request a password reset email
+ *     tags: [Auth]
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email: { type: string, example: "farmer@fertismart.lk" }
+ *     responses:
+ *       200:
+ *         description: Generic confirmation (same response whether or not the email exists)
+ *       400:
+ *         description: Email missing
+ */
+router.post("/forgot-password", forgotPassword);
+
+/**
+ * @swagger
+ * /auth/reset-password/{token}:
+ *   post:
+ *     summary: Set a new password using a reset token
+ *     tags: [Auth]
+ *     security: []
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [password]
+ *             properties:
+ *               password: { type: string, format: password, example: "NewPass@123" }
+ *     responses:
+ *       200:
+ *         description: Password updated
+ *       400:
+ *         description: Token invalid/expired or password too short
+ */
+router.post("/reset-password/:token", resetPassword);
 
 /**
  * @swagger
