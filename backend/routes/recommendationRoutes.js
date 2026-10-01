@@ -5,6 +5,7 @@ const {
   myRecommendations,
   pendingRecommendations,
   reviewRecommendation,
+  downloadRecommendationPdf,
 } = require("../controllers/recommendationController");
 const { protect, authorize } = require("../middleware/auth");
 
@@ -102,5 +103,30 @@ router.get("/pending", protect, authorize("officer"), pendingRecommendations);
  *         description: Recommendation not found
  */
 router.patch("/:id/review", protect, authorize("officer"), reviewRecommendation);
+
+/**
+ * @swagger
+ * /recommendations/{id}/pdf:
+ *   get:
+ *     summary: Download an approved recommendation as a PDF
+ *     tags: [Recommendations]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200:
+ *         description: PDF file stream
+ *         content:
+ *           application/pdf: {}
+ *       400:
+ *         description: Recommendation has not been approved yet
+ *       403:
+ *         description: Forbidden — not the owning farmer, an officer, or an admin
+ *       404:
+ *         description: Recommendation not found
+ */
+router.get("/:id/pdf", protect, authorize("farmer", "officer", "admin"), downloadRecommendationPdf);
 
 module.exports = router;
