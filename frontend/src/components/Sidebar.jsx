@@ -24,19 +24,20 @@ export default function Sidebar() {
   const items = NAV_ITEMS[user?.role] || [];
 
   return (
-    <aside className="w-64 min-h-screen bg-[#1C3D20] text-white flex flex-col">
-      <div className="px-6 py-6 border-b border-white/10">
+    <aside className="flex h-full w-64 flex-col bg-[#1C3D20] text-white">
+      <div className="shrink-0 border-b border-white/10 px-6 py-6">
         <h1 className="text-xl font-bold tracking-tight">FertiSmart SL</h1>
-        <p className="text-xs text-white/60 mt-1 capitalize">{user?.role} Portal</p>
+        <p className="mt-1 text-xs capitalize text-white/60">{user?.role} Portal</p>
       </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
+
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
         {items.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${
+              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 isActive ? "bg-white/15 text-white" : "text-white/70 hover:bg-white/10"
               }`
             }
@@ -46,11 +47,12 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
-      <div className="px-3 py-4 border-t border-white/10">
-        <div className="px-3 py-2 text-sm text-white/70 truncate">{user?.name}</div>
+
+      <div className="shrink-0 border-t border-white/10 px-3 py-4">
+        <div className="truncate px-3 py-2 text-sm text-white/70">{user?.name}</div>
         <button
           onClick={logout}
-          className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-white/70 hover:bg-white/10 transition"
+          className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-white/70 transition hover:bg-white/10"
         >
           Sign out
         </button>

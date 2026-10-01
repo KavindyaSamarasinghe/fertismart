@@ -12,6 +12,7 @@ const fertilizerRoutes = require("./routes/fertilizerRoutes");
 const farmRoutes = require("./routes/farmRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use("/api/fertilizers", fertilizerRoutes);
 app.use("/api/farms", farmRoutes);
 app.use("/api/recommendations", recommendationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
