@@ -1,5 +1,4 @@
-// Standalone sanity check — no MongoDB, no server, just the pure functions.
-// Run with: node test-baseline-standalone.js
+
 
 const {
   computeStraightFertilizerBaseline,

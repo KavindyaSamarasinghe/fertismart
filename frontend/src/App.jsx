@@ -12,6 +12,7 @@ import Recommendations from "./pages/farmer/Recommendations.jsx";
 import OfficerDashboard from "./pages/officer/OfficerDashboard.jsx";
 import FarmsOverview from "./pages/officer/FarmsOverview.jsx";
 
+import AdminOverview from "./pages/admin/AdminOverview.jsx";
 import CropsAdmin from "./pages/admin/CropsAdmin.jsx";
 import FertilizersAdmin from "./pages/admin/FertilizersAdmin.jsx";
 import UsersAdmin from "./pages/admin/UsersAdmin.jsx";
@@ -59,6 +60,14 @@ export default function App() {
 
       <Route
         path="/admin"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <AdminOverview />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/crops"
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <CropsAdmin />

@@ -12,7 +12,8 @@ const NAV_ITEMS = {
     { to: "/officer/farms", label: "Farms Overview", icon: "🗺️" },
   ],
   admin: [
-    { to: "/admin", label: "Crops", icon: "🥬" },
+    { to: "/admin", label: "Overview", icon: "📊" },
+    { to: "/admin/crops", label: "Crops", icon: "🥬" },
     { to: "/admin/fertilizers", label: "Fertilizers", icon: "🧪" },
     { to: "/admin/users", label: "Users", icon: "👥" },
   ],

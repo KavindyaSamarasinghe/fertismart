@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listUsers, createStaffUser, setUserStatus } = require("../controllers/adminController");
+const { listUsers, createStaffUser, setUserStatus, getOverview } = require("../controllers/adminController");
 const { protect, authorize } = require("../middleware/auth");
 
 router.use(protect, authorize("admin"));
@@ -9,8 +9,22 @@ router.use(protect, authorize("admin"));
  * @swagger
  * tags:
  *   name: Admin
- *   description: User management (Admin only — all routes below require Admin role)
+ *   description: User management and system analytics (Admin only — all routes below require Admin role)
  */
+
+/**
+ * @swagger
+ * /admin/overview:
+ *   get:
+ *     summary: System-wide recommendation analytics
+ *     tags: [Admin]
+ *     responses:
+ *       200:
+ *         description: Aggregated totals, cost/savings summary, and breakdowns by crop and region
+ *       403:
+ *         description: Forbidden — Admin role required
+ */
+router.get("/overview", getOverview);
 
 /**
  * @swagger
@@ -72,9 +86,9 @@ router.post("/users", createStaffUser);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [status]
+ *             required: [isActive]
  *             properties:
- *               status: { type: string, enum: [active, inactive] }
+ *               isActive: { type: boolean }
  *     responses:
  *       200:
  *         description: User status updated

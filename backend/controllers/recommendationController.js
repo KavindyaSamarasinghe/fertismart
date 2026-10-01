@@ -60,15 +60,7 @@ exports.generateRecommendation = async (req, res) => {
       });
     }
 
-    // Baseline comparison: what unoptimized, conventional fertilizer
-    // application would have cost for the same nutrient requirement. The
-    // compound baseline (a single general-purpose fertilizer applied at a
-    // flat rate) is used as the primary comparison, since it best reflects
-    // typical practice without a decision-support tool. The straight-
-    // fertilizer baseline is also computed and included for completeness /
-    // discussion, but is not used for the stored savings figure, since it
-    // can coincide exactly with the LP optimum when straight fertilizers
-    // are already the cheapest source per nutrient in the catalogue.
+    
     const compoundBaseline = computeCompoundBaseline(fertilizers, scaledRequirement);
     const straightBaseline = computeStraightFertilizerBaseline(fertilizers, scaledRequirement);
 

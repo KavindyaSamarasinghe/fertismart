@@ -1,11 +1,5 @@
 const solver = require("javascript-lp-solver");
 
-/**
- * Core research contribution of FertiSmart SL: builds and solves a
- * Simplex Linear Programme that finds the cost-minimized combination of
- * available fertilizers (in kg/ha) that satisfies a crop's (rainfall-
- * adjusted) minimum N, P, K requirement.
- */
 function solveFertilizerMix(fertilizers, requirement) {
   if (!Array.isArray(fertilizers) || fertilizers.length === 0) {
     throw new Error("At least one fertilizer must be provided to the solver");
