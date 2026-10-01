@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
@@ -200,6 +200,14 @@ export default function Recommendations() {
   const [pageError, setPageError] = useState("");
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
+
+  // Used by "New plan for this farm": selects the farm and scrolls to the form.
+  const formSectionRef = useRef(null);
+
+  const handleNewPlanForFarm = (farmId) => {
+    setForm((previous) => ({ ...previous, farmId: farmId || "" }));
+    formSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const loadAll = useCallback(async () => {
     const [farmsRes, cropsRes, recsRes] = await Promise.all([
@@ -424,7 +432,10 @@ export default function Recommendations() {
         {/* Main content */}
         <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-5">
           {/* Recommendation request */}
-          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-2">
+          <section
+            ref={formSectionRef}
+            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:col-span-2"
+          >
             <div className="border-b border-slate-100 px-5 py-5 sm:px-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E8F3EB] text-[#176344]">
@@ -797,40 +808,40 @@ export default function Recommendations() {
                     </div>
 
                     {/* Fertilizer mix */}
-{rec.fertilizerMix?.length > 0 && (
-  <div className="mt-4">
-    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-      Fertilizer mix
-    </p>
+                    {rec.fertilizerMix?.length > 0 && (
+                      <div className="mt-4">
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          Fertilizer mix
+                        </p>
 
-    <div className="overflow-x-auto rounded-xl border border-slate-200">
-      <table className="w-full min-w-[360px] text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-          <tr>
-            <th className="px-4 py-2.5 font-medium">Fertilizer</th>
-            <th className="px-4 py-2.5 text-right font-medium">Quantity</th>
-            <th className="px-4 py-2.5 text-right font-medium">Cost</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-100">
-          {rec.fertilizerMix.map((mix, index) => (
-            <tr key={`${rec._id}-${mix.fertilizerName}-${index}`}>
-              <td className="px-4 py-2.5 font-medium text-slate-700">
-                {mix.fertilizerName}
-              </td>
-              <td className="px-4 py-2.5 text-right text-slate-600">
-                {mix.quantityKg} kg
-              </td>
-              <td className="px-4 py-2.5 text-right text-slate-700">
-                Rs. {formatCurrency(mix.costLKR)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </div>
-)}
+                        <div className="overflow-x-auto rounded-xl border border-slate-200">
+                          <table className="w-full min-w-[360px] text-left text-sm">
+                            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                              <tr>
+                                <th className="px-4 py-2.5 font-medium">Fertilizer</th>
+                                <th className="px-4 py-2.5 text-right font-medium">Quantity</th>
+                                <th className="px-4 py-2.5 text-right font-medium">Cost</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              {rec.fertilizerMix.map((mix, index) => (
+                                <tr key={`${rec._id}-${mix.fertilizerName}-${index}`}>
+                                  <td className="px-4 py-2.5 font-medium text-slate-700">
+                                    {mix.fertilizerName}
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right text-slate-600">
+                                    {mix.quantityKg} kg
+                                  </td>
+                                  <td className="px-4 py-2.5 text-right text-slate-700">
+                                    Rs. {formatCurrency(mix.costLKR)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Total cost + savings + actions */}
                     <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
@@ -852,15 +863,14 @@ export default function Recommendations() {
                         {/* Renders only when rec.status === "approved" */}
                         <PdfButton rec={rec} />
 
-                        <Link
-                          to={`/farmer/recommendations?farmId=${encodeURIComponent(
-                            rec.farm?._id || ""
-                          )}`}
+                        <button
+                          type="button"
+                          onClick={() => handleNewPlanForFarm(rec.farm?._id)}
                           className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9DCCF] px-4 py-2.5 text-sm font-semibold text-[#145C3B] transition hover:bg-[#F0F6F0]"
                         >
-                          View farm
+                          New plan for this farm
                           <Icon name="arrow" className="h-4 w-4" />
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </article>
