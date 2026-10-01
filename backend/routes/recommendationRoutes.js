@@ -6,6 +6,7 @@ const {
   pendingRecommendations,
   reviewRecommendation,
   downloadRecommendationPdf,
+  reviewHistory,
 } = require("../controllers/recommendationController");
 const { protect, authorize } = require("../middleware/auth");
 
@@ -70,6 +71,34 @@ router.get("/mine", protect, authorize("farmer"), myRecommendations);
  *         description: Forbidden — Officer role required
  */
 router.get("/pending", protect, authorize("officer"), pendingRecommendations);
+
+/**
+ * @swagger
+ * /recommendations/history:
+ *   get:
+ *     summary: Review history (Officer sees own reviews; Admin sees all)
+ *     tags: [Recommendations]
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema: { type: string, enum: [approved, rejected] }
+ *       - in: query
+ *         name: search
+ *         schema: { type: string }
+ *         description: Farmer name or email
+ *       - in: query
+ *         name: from
+ *         schema: { type: string, example: "2026-09-01" }
+ *       - in: query
+ *         name: to
+ *         schema: { type: string, example: "2026-09-30" }
+ *     responses:
+ *       200:
+ *         description: Reviewed recommendations plus approved/rejected counts
+ *       403:
+ *         description: Forbidden — Officer or Admin role required
+ */
+router.get("/history", protect, authorize("officer", "admin"), reviewHistory);
 
 /**
  * @swagger

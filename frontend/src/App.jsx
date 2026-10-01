@@ -13,6 +13,7 @@ import Recommendations from "./pages/farmer/Recommendations.jsx";
 
 import OfficerDashboard from "./pages/officer/OfficerDashboard.jsx";
 import FarmsOverview from "./pages/officer/FarmsOverview.jsx";
+import ReviewHistory from "./pages/officer/ReviewHistory.jsx";
 
 import AdminOverview from "./pages/admin/AdminOverview.jsx";
 import CropsAdmin from "./pages/admin/CropsAdmin.jsx";
@@ -54,6 +55,14 @@ export default function App() {
         }
       />
       <Route
+        path="/officer/history"
+        element={
+          <ProtectedRoute allowedRoles={["officer"]}>
+            <ReviewHistory />
+          </ProtectedRoute>
+        }
+      />
+      <Route
         path="/officer/farms"
         element={
           <ProtectedRoute allowedRoles={["officer"]}>
@@ -67,6 +76,14 @@ export default function App() {
         element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <AdminOverview />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/history"
+        element={
+          <ProtectedRoute allowedRoles={["admin"]}>
+            <ReviewHistory />
           </ProtectedRoute>
         }
       />

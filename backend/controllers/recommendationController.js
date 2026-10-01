@@ -3,6 +3,7 @@ const Recommendation = require("../models/Recommendation");
 const Farm = require("../models/Farm");
 const Crop = require("../models/Crop");
 const Fertilizer = require("../models/Fertilizer");
+const User = require("../models/User");
 const { solveFertilizerMix } = require("../utils/lpSolver");
 const { classifyRainfall, fetchRainfallMm } = require("../utils/rainfall");
 const {
@@ -137,6 +138,67 @@ exports.reviewRecommendation = async (req, res) => {
     res.json({ recommendation });
   } catch (err) {
     res.status(500).json({ message: "Failed to review recommendation", error: err.message });
+  }
+};
+
+/**
+ * Review history / audit trail.
+ * - Officers see only the recommendations THEY reviewed.
+ * - Admins see every reviewed recommendation across all officers.
+ * Query params (all optional): status=approved|rejected, search=<farmer name/email>,
+ * from=YYYY-MM-DD, to=YYYY-MM-DD (filters on the review date).
+ */
+exports.reviewHistory = async (req, res) => {
+  try {
+    const { status, search, from, to } = req.query;
+
+    const filter = { status: { $in: ["approved", "rejected"] } };
+
+    if (req.user.role === "officer") filter.reviewedBy = req.user._id;
+    if (["approved", "rejected"].includes(status)) filter.status = status;
+
+    // Date range on reviewedAt (inclusive of the whole "to" day)
+    if (from || to) {
+      filter.reviewedAt = {};
+      if (from) {
+        const d = new Date(`${from}T00:00:00`);
+        if (!Number.isNaN(d.getTime())) filter.reviewedAt.$gte = d;
+      }
+      if (to) {
+        const d = new Date(`${to}T23:59:59.999`);
+        if (!Number.isNaN(d.getTime())) filter.reviewedAt.$lte = d;
+      }
+      if (Object.keys(filter.reviewedAt).length === 0) delete filter.reviewedAt;
+    }
+
+    // Search by farmer name or email
+    if (search && search.trim()) {
+      const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const rx = new RegExp(escaped, "i");
+      const farmers = await User.find({ $or: [{ name: rx }, { email: rx }] }).select("_id");
+      filter.farmer = { $in: farmers.map((f) => f._id) };
+    }
+
+    const recs = await Recommendation.find(filter)
+      .populate("crop", "name")
+      .populate("farmer", "name email region")
+      .populate("farm", "farmName region areaHectares soilType")
+      .populate("reviewedBy", "name")
+      .sort({ reviewedAt: -1 })
+      .limit(300);
+
+    const approved = recs.filter((r) => r.status === "approved").length;
+
+    res.json({
+      recommendations: recs,
+      summary: {
+        total: recs.length,
+        approved,
+        rejected: recs.length - approved,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load review history", error: err.message });
   }
 };
 
