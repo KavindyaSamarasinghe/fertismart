@@ -1,9 +1,9 @@
-
 import React, { useCallback, useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
+import PdfButton from "../../components/PdfButton";
 
 const STATUS_STYLES = {
   pending_review: "bg-amber-50 text-amber-700 border-amber-200",
@@ -796,7 +796,43 @@ export default function Recommendations() {
                       </div>
                     </div>
 
-                    {/* Total cost + savings */}
+                    {/* Fertilizer mix */}
+{rec.fertilizerMix?.length > 0 && (
+  <div className="mt-4">
+    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+      Fertilizer mix
+    </p>
+
+    <div className="overflow-x-auto rounded-xl border border-slate-200">
+      <table className="w-full min-w-[360px] text-left text-sm">
+        <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th className="px-4 py-2.5 font-medium">Fertilizer</th>
+            <th className="px-4 py-2.5 text-right font-medium">Quantity</th>
+            <th className="px-4 py-2.5 text-right font-medium">Cost</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {rec.fertilizerMix.map((mix, index) => (
+            <tr key={`${rec._id}-${mix.fertilizerName}-${index}`}>
+              <td className="px-4 py-2.5 font-medium text-slate-700">
+                {mix.fertilizerName}
+              </td>
+              <td className="px-4 py-2.5 text-right text-slate-600">
+                {mix.quantityKg} kg
+              </td>
+              <td className="px-4 py-2.5 text-right text-slate-700">
+                Rs. {formatCurrency(mix.costLKR)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+)}
+
+                    {/* Total cost + savings + actions */}
                     <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
                       <div>
                         <p className="text-xs text-slate-500">
@@ -812,15 +848,20 @@ export default function Recommendations() {
                         )}
                       </div>
 
-                      <Link
-                        to={`/farmer/recommendations?farmId=${encodeURIComponent(
-                          rec.farm?._id || ""
-                        )}`}
-                        className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9DCCF] px-4 py-2.5 text-sm font-semibold text-[#145C3B] transition hover:bg-[#F0F6F0]"
-                      >
-                        View farm
-                        <Icon name="arrow" className="h-4 w-4" />
-                      </Link>
+                      <div className="flex flex-wrap items-start gap-2">
+                        {/* Renders only when rec.status === "approved" */}
+                        <PdfButton rec={rec} />
+
+                        <Link
+                          to={`/farmer/recommendations?farmId=${encodeURIComponent(
+                            rec.farm?._id || ""
+                          )}`}
+                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9DCCF] px-4 py-2.5 text-sm font-semibold text-[#145C3B] transition hover:bg-[#F0F6F0]"
+                        >
+                          View farm
+                          <Icon name="arrow" className="h-4 w-4" />
+                        </Link>
+                      </div>
                     </div>
                   </article>
                 ))}
