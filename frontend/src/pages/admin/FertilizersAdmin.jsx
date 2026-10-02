@@ -1,8 +1,20 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { downloadCsv } from "../../utils/exportCsv.js";
 
 const empty = { name: "", type: "Nitrogen", n: "", p: "", k: "", costPerKgLKR: "", supplier: "" };
+
+const FERTILIZER_COLUMNS = [
+  { header: "Fertilizer", value: (f) => f.name },
+  { header: "Type", value: (f) => f.type },
+  { header: "N (%)", value: (f) => f.nutrientContentPercent?.n },
+  { header: "P (%)", value: (f) => f.nutrientContentPercent?.p },
+  { header: "K (%)", value: (f) => f.nutrientContentPercent?.k },
+  { header: "Cost per kg (LKR)", value: (f) => f.costPerKgLKR },
+  { header: "Supplier", value: (f) => f.supplier },
+];
 
 export default function FertilizersAdmin() {
   const [fertilizers, setFertilizers] = useState([]);
@@ -37,17 +49,22 @@ export default function FertilizersAdmin() {
     load();
   };
 
+  const handleExport = () => downloadCsv("fertilizers", FERTILIZER_COLUMNS, fertilizers);
+
   return (
     <DashboardLayout
       title="Fertilizer Reference Data"
       subtitle="Nutrient content and market cost used as inputs to the Simplex solver"
       actions={
-        <button
-          onClick={() => setShowForm((s) => !s)}
-          className="px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
-        >
-          {showForm ? "Cancel" : "+ Add fertilizer"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <ExportCsvButton onClick={handleExport} disabled={fertilizers.length === 0} />
+          <button
+            onClick={() => setShowForm((s) => !s)}
+            className="px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
+          >
+            {showForm ? "Cancel" : "+ Add fertilizer"}
+          </button>
+        </div>
       }
     >
       {showForm && (

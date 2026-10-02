@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { downloadCsv } from "../../utils/exportCsv.js";
 
 const empty = { name: "", scientificName: "", n: "", p: "", k: "", growingDurationDays: "" };
 
@@ -19,6 +21,17 @@ const Field = ({ label, className = "", ...props }) => (
     />
   </label>
 );
+
+const CROP_COLUMNS = [
+  { header: "Crop", value: (c) => c.name },
+  { header: "Scientific name", value: (c) => c.scientificName },
+  { header: "Category", value: (c) => c.category },
+  { header: "N (kg/ha)", value: (c) => c.npkRequirementKgPerHa?.n },
+  { header: "P (kg/ha)", value: (c) => c.npkRequirementKgPerHa?.p },
+  { header: "K (kg/ha)", value: (c) => c.npkRequirementKgPerHa?.k },
+  { header: "Growing duration (days)", value: (c) => c.growingDurationDays },
+  { header: "Source", value: (c) => c.source },
+];
 
 export default function CropsAdmin() {
   const [crops, setCrops] = useState([]);
@@ -48,6 +61,8 @@ export default function CropsAdmin() {
     if (!q) return crops;
     return crops.filter((c) => c.name?.toLowerCase().includes(q) || c.scientificName?.toLowerCase().includes(q));
   }, [crops, search]);
+
+  const handleExport = () => downloadCsv("crops", CROP_COLUMNS, filtered);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,6 +110,8 @@ export default function CropsAdmin() {
               className="w-64 rounded-lg border border-slate-300 bg-white py-2.5 pl-10 pr-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-[#1C3D20] focus:ring-4 focus:ring-[#1C3D20]/10"
             />
           </div>
+
+          <ExportCsvButton onClick={handleExport} disabled={loading || filtered.length === 0} />
 
           <button
             type="button"

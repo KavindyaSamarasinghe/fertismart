@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { downloadCsv } from "../../utils/exportCsv.js";
 
 const empty = { name: "", email: "", password: "", role: "officer" };
+
+const USER_COLUMNS = [
+  { header: "Name", value: (u) => u.name },
+  { header: "Email", value: (u) => u.email },
+  { header: "Role", value: (u) => u.role },
+  { header: "Region", value: (u) => u.region },
+  { header: "Phone", value: (u) => u.phone },
+  { header: "Assigned regions", value: (u) => (u.assignedRegions || []).join("; ") },
+  { header: "Status", value: (u) => (u.isActive ? "Active" : "Inactive") },
+  { header: "Created", value: (u) => (u.createdAt ? new Date(u.createdAt).toISOString().slice(0, 10) : "") },
+];
 
 export default function UsersAdmin() {
   const [users, setUsers] = useState([]);
@@ -37,17 +50,22 @@ export default function UsersAdmin() {
     load();
   };
 
+  const handleExport = () => downloadCsv("users", USER_COLUMNS, users);
+
   return (
     <DashboardLayout
       title="User Accounts"
       subtitle="Provision Agricultural Officer and Administrator accounts"
       actions={
-        <button
-          onClick={() => setShowForm((s) => !s)}
-          className="px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
-        >
-          {showForm ? "Cancel" : "+ Add staff account"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <ExportCsvButton onClick={handleExport} disabled={users.length === 0} />
+          <button
+            onClick={() => setShowForm((s) => !s)}
+            className="px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
+          >
+            {showForm ? "Cancel" : "+ Add staff account"}
+          </button>
+        </div>
       }
     >
       {showForm && (
