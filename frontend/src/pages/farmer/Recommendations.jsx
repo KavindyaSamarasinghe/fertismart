@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import Pagination from "../../components/Pagination.jsx";
 import apiClient from "../../api/axiosClient.js";
+import usePagination from "../../hooks/usePagination.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 import PdfButton from "../../components/PdfButton";
@@ -203,6 +205,16 @@ export default function Recommendations() {
   const [pageError, setPageError] = useState("");
   const [result, setResult] = useState(null);
 
+  // History pagination (5 cards per page; newest first from the API)
+  const {
+    page,
+    setPage,
+    totalPages,
+    pageItems: pagedRecommendations,
+    total: totalHistory,
+    pageSize,
+  } = usePagination(recommendations, 5);
+
   // Used by "New plan for this farm": selects the farm and scrolls to the form.
   const formSectionRef = useRef(null);
 
@@ -312,6 +324,7 @@ export default function Recommendations() {
       // Refresh history after a recommendation is generated.
       try {
         await loadAll();
+        setPage(1); // the newest recommendation is listed first
       } catch {
         // Keep the generated result visible if history refresh fails.
       }
@@ -732,142 +745,152 @@ export default function Recommendations() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {recommendations.map((rec) => (
-                  <article
-                    key={rec._id}
-                    className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#C9DCCF] hover:shadow-md sm:p-6"
-                  >
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="flex min-w-0 items-start gap-3">
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F3EB] text-[#176344]">
-                          <Icon name="leaf" className="h-5 w-5" />
+              <>
+                <div className="space-y-4">
+                  {pagedRecommendations.map((rec) => (
+                    <article
+                      key={rec._id}
+                      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#C9DCCF] hover:shadow-md sm:p-6"
+                    >
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex min-w-0 items-start gap-3">
+                          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F3EB] text-[#176344]">
+                            <Icon name="leaf" className="h-5 w-5" />
+                          </div>
+
+                          <div className="min-w-0">
+                            <h4 className="font-semibold text-[#1C2D35]">
+                              {rec.crop?.name || "Crop not available"}
+                            </h4>
+
+                            <p className="mt-1 text-sm text-slate-500">
+                              {rec.farm?.farmName ||
+                                rec.farm?.region ||
+                                "Farm not available"}
+                            </p>
+
+                            <p className="mt-1 text-xs text-slate-400">
+                              Generated {formatDate(rec.createdAt)}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="min-w-0">
-                          <h4 className="font-semibold text-[#1C2D35]">
-                            {rec.crop?.name || "Crop not available"}
-                          </h4>
-
-                          <p className="mt-1 text-sm text-slate-500">
-                            {rec.farm?.farmName ||
-                              rec.farm?.region ||
-                              "Farm not available"}
-                          </p>
-
-                          <p className="mt-1 text-xs text-slate-400">
-                            Generated {formatDate(rec.createdAt)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <span
-                        className={`inline-flex w-fit shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${
-                          STATUS_STYLES[rec.status] ||
-                          STATUS_STYLES.pending_review
-                        }`}
-                      >
-                        {formatStatus(rec.status)}
-                      </span>
-                    </div>
-
-                    {/* Rainfall details */}
-                    <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      <div className="rounded-xl bg-slate-50 p-4">
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <Icon name="cloud" className="h-4 w-4" />
-                          <span className="text-xs font-medium">
-                            Rainfall classification
-                          </span>
-                        </div>
-
-                        <p className="mt-2 font-semibold capitalize text-[#1C2D35]">
-                          {rec.rainfallClass || "Not available"}
-                        </p>
-                      </div>
-
-                      <div className="rounded-xl bg-slate-50 p-4">
-                        <p className="text-xs font-medium text-slate-500">
-                          Nitrogen leaching multiplier
-                        </p>
-
-                        <p className="mt-2 font-semibold text-[#1C2D35]">
-                          {rec.nitrogenLeachingMultiplier ?? "—"}
-                          {rec.nitrogenLeachingMultiplier != null &&
-                            "×"}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Fertilizer mix */}
-                    {rec.fertilizerMix?.length > 0 && (
-                      <div className="mt-4">
-                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                          Fertilizer mix
-                        </p>
-
-                        <div className="overflow-x-auto rounded-xl border border-slate-200">
-                          <table className="w-full min-w-[360px] text-left text-sm">
-                            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
-                              <tr>
-                                <th className="px-4 py-2.5 font-medium">Fertilizer</th>
-                                <th className="px-4 py-2.5 text-right font-medium">Quantity</th>
-                                <th className="px-4 py-2.5 text-right font-medium">Cost</th>
-                              </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                              {rec.fertilizerMix.map((mix, index) => (
-                                <tr key={`${rec._id}-${mix.fertilizerName}-${index}`}>
-                                  <td className="px-4 py-2.5 font-medium text-slate-700">
-                                    {mix.fertilizerName}
-                                  </td>
-                                  <td className="px-4 py-2.5 text-right text-slate-600">
-                                    {mix.quantityKg} kg
-                                  </td>
-                                  <td className="px-4 py-2.5 text-right text-slate-700">
-                                    Rs. {formatCurrency(mix.costLKR)}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Total cost + savings + actions */}
-                    <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p className="text-xs text-slate-500">
-                          Estimated fertilizer cost
-                        </p>
-                        <p className="mt-1 text-xl font-bold text-[#145C3B]">
-                          Rs. {formatCurrency(rec.totalCostLKR)}
-                        </p>
-                        {typeof rec.savingsPercent === "number" && rec.savingsPercent > 0 && (
-                          <p className="mt-1 text-xs font-semibold text-emerald-700">
-                            ↓ {rec.savingsPercent.toFixed(1)}% vs conventional application
-                          </p>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap items-start gap-2">
-                        {/* Renders only when rec.status === "approved" */}
-                        <PdfButton rec={rec} />
-
-                        <button
-                          type="button"
-                          onClick={() => handleNewPlanForFarm(rec.farm?._id)}
-                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9DCCF] px-4 py-2.5 text-sm font-semibold text-[#145C3B] transition hover:bg-[#F0F6F0]"
+                        <span
+                          className={`inline-flex w-fit shrink-0 items-center rounded-full border px-3 py-1.5 text-xs font-medium ${
+                            STATUS_STYLES[rec.status] ||
+                            STATUS_STYLES.pending_review
+                          }`}
                         >
-                          New plan for this farm
-                          <Icon name="arrow" className="h-4 w-4" />
-                        </button>
+                          {formatStatus(rec.status)}
+                        </span>
                       </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+
+                      {/* Rainfall details */}
+                      <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div className="rounded-xl bg-slate-50 p-4">
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Icon name="cloud" className="h-4 w-4" />
+                            <span className="text-xs font-medium">
+                              Rainfall classification
+                            </span>
+                          </div>
+
+                          <p className="mt-2 font-semibold capitalize text-[#1C2D35]">
+                            {rec.rainfallClass || "Not available"}
+                          </p>
+                        </div>
+
+                        <div className="rounded-xl bg-slate-50 p-4">
+                          <p className="text-xs font-medium text-slate-500">
+                            Nitrogen leaching multiplier
+                          </p>
+
+                          <p className="mt-2 font-semibold text-[#1C2D35]">
+                            {rec.nitrogenLeachingMultiplier ?? "—"}
+                            {rec.nitrogenLeachingMultiplier != null &&
+                              "×"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Fertilizer mix */}
+                      {rec.fertilizerMix?.length > 0 && (
+                        <div className="mt-4">
+                          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            Fertilizer mix
+                          </p>
+
+                          <div className="overflow-x-auto rounded-xl border border-slate-200">
+                            <table className="w-full min-w-[360px] text-left text-sm">
+                              <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                                <tr>
+                                  <th className="px-4 py-2.5 font-medium">Fertilizer</th>
+                                  <th className="px-4 py-2.5 text-right font-medium">Quantity</th>
+                                  <th className="px-4 py-2.5 text-right font-medium">Cost</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-100">
+                                {rec.fertilizerMix.map((mix, index) => (
+                                  <tr key={`${rec._id}-${mix.fertilizerName}-${index}`}>
+                                    <td className="px-4 py-2.5 font-medium text-slate-700">
+                                      {mix.fertilizerName}
+                                    </td>
+                                    <td className="px-4 py-2.5 text-right text-slate-600">
+                                      {mix.quantityKg} kg
+                                    </td>
+                                    <td className="px-4 py-2.5 text-right text-slate-700">
+                                      Rs. {formatCurrency(mix.costLKR)}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Total cost + savings + actions */}
+                      <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-xs text-slate-500">
+                            Estimated fertilizer cost
+                          </p>
+                          <p className="mt-1 text-xl font-bold text-[#145C3B]">
+                            Rs. {formatCurrency(rec.totalCostLKR)}
+                          </p>
+                          {typeof rec.savingsPercent === "number" && rec.savingsPercent > 0 && (
+                            <p className="mt-1 text-xs font-semibold text-emerald-700">
+                              ↓ {rec.savingsPercent.toFixed(1)}% vs conventional application
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-start gap-2">
+                          {/* Renders only when rec.status === "approved" */}
+                          <PdfButton rec={rec} />
+
+                          <button
+                            type="button"
+                            onClick={() => handleNewPlanForFarm(rec.farm?._id)}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#C9DCCF] px-4 py-2.5 text-sm font-semibold text-[#145C3B] transition hover:bg-[#F0F6F0]"
+                          >
+                            New plan for this farm
+                            <Icon name="arrow" className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  total={totalHistory}
+                  pageSize={pageSize}
+                  onChange={setPage}
+                />
+              </>
             )}
           </section>
         </div>

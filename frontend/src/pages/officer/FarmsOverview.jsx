@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import Pagination from "../../components/Pagination.jsx";
 import apiClient from "../../api/axiosClient.js";
+import usePagination from "../../hooks/usePagination.js";
 
 const Icon = ({ children, className = "h-4 w-4" }) => (
   <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -53,6 +55,13 @@ export default function FarmsOverview() {
       [f.farmName, f.farmer?.name, f.region].some((v) => v?.toLowerCase().includes(q))
     );
   }, [farms, search]);
+
+  const { page, setPage, totalPages, pageItems, total, pageSize } = usePagination(filtered, 10);
+
+  // Return to page 1 whenever the filters change
+  useEffect(() => {
+    setPage(1);
+  }, [search, region, setPage]);
 
   return (
     <DashboardLayout
@@ -127,7 +136,7 @@ export default function FarmsOverview() {
                 ))}
 
               {!loading &&
-                filtered.map((f) => (
+                pageItems.map((f) => (
                   <tr key={f._id} className="border-t border-slate-100 hover:bg-slate-50/60">
                     <td className="px-6 py-3.5">
                       <div className="flex items-center gap-2.5 font-medium text-slate-900">
@@ -187,6 +196,16 @@ export default function FarmsOverview() {
           )}
         </div>
       </div>
+
+      {!loading && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          total={total}
+          pageSize={pageSize}
+          onChange={setPage}
+        />
+      )}
     </DashboardLayout>
   );
 }

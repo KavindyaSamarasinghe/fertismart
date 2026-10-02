@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
+import Pagination from "../../components/Pagination.jsx";
 import apiClient from "../../api/axiosClient.js";
+import usePagination from "../../hooks/usePagination.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
@@ -26,6 +28,8 @@ export default function UsersAdmin() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
 
+  const { page, setPage, totalPages, pageItems, total, pageSize } = usePagination(users, 10);
+
   const load = async () => {
     try {
       const { data } = await apiClient.get("/admin/users");
@@ -48,6 +52,7 @@ export default function UsersAdmin() {
       toast.success(`${form.role === "admin" ? "Administrator" : "Officer"} account created for ${form.name}.`);
       setForm(empty);
       setShowForm(false);
+      setPage(1); // newest accounts are listed first
       load();
     } catch (err) {
       toast.error(errorMessage(err, "Failed to create the account."));
@@ -66,6 +71,7 @@ export default function UsersAdmin() {
     }
   };
 
+  // Exports every user, not just the current page
   const handleExport = () => {
     downloadCsv("users", USER_COLUMNS, users);
     toast.success(`Exported ${users.length} user${users.length === 1 ? "" : "s"} to CSV.`);
@@ -146,7 +152,7 @@ export default function UsersAdmin() {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {pageItems.map((u) => (
               <tr key={u._id} className="border-t border-slate-100">
                 <td className="px-5 py-3 font-medium text-slate-900">{u.name}</td>
                 <td className="px-5 py-3 text-slate-600">{u.email}</td>
@@ -175,6 +181,14 @@ export default function UsersAdmin() {
           </tbody>
         </table>
       </div>
+
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        pageSize={pageSize}
+        onChange={setPage}
+      />
     </DashboardLayout>
   );
 }
