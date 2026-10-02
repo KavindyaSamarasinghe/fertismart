@@ -3,6 +3,7 @@ import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
 const empty = { name: "", email: "", password: "", role: "officer" };
 
@@ -18,39 +19,57 @@ const USER_COLUMNS = [
 ];
 
 export default function UsersAdmin() {
+  const toast = useToast();
+
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState(empty);
   const [showForm, setShowForm] = useState(false);
-  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const { data } = await apiClient.get("/admin/users");
-    setUsers(data.users);
+    try {
+      const { data } = await apiClient.get("/admin/users");
+      setUsers(data.users);
+    } catch (err) {
+      toast.error(errorMessage(err, "Unable to load users. Please try again."));
+    }
   };
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setSaving(true);
     try {
       await apiClient.post("/admin/users", form);
+      toast.success(`${form.role === "admin" ? "Administrator" : "Officer"} account created for ${form.name}.`);
       setForm(empty);
       setShowForm(false);
       load();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create user");
+      toast.error(errorMessage(err, "Failed to create the account."));
+    } finally {
+      setSaving(false);
     }
   };
 
-  const toggleStatus = async (id, isActive) => {
-    await apiClient.patch(`/admin/users/${id}/status`, { isActive: !isActive });
-    load();
+  const toggleStatus = async (user) => {
+    try {
+      await apiClient.patch(`/admin/users/${user._id}/status`, { isActive: !user.isActive });
+      toast.success(`${user.name}'s account ${user.isActive ? "deactivated" : "activated"}.`);
+      load();
+    } catch (err) {
+      toast.error(errorMessage(err, "Failed to update the account status."));
+    }
   };
 
-  const handleExport = () => downloadCsv("users", USER_COLUMNS, users);
+  const handleExport = () => {
+    downloadCsv("users", USER_COLUMNS, users);
+    toast.success(`Exported ${users.length} user${users.length === 1 ? "" : "s"} to CSV.`);
+  };
 
   return (
     <DashboardLayout
@@ -73,11 +92,6 @@ export default function UsersAdmin() {
           onSubmit={handleSubmit}
           className="bg-white border border-slate-200 rounded-xl p-6 mb-6 grid grid-cols-2 gap-4"
         >
-          {error && (
-            <div className="col-span-2 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-              {error}
-            </div>
-          )}
           <input
             required
             placeholder="Full name"
@@ -112,9 +126,10 @@ export default function UsersAdmin() {
           </select>
           <button
             type="submit"
-            className="col-span-2 px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
+            disabled={saving}
+            className="col-span-2 px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition disabled:opacity-60"
           >
-            Create account
+            {saving ? "Creating..." : "Create account"}
           </button>
         </form>
       )}
@@ -149,7 +164,7 @@ export default function UsersAdmin() {
                 </td>
                 <td className="px-5 py-3 text-right">
                   <button
-                    onClick={() => toggleStatus(u._id, u.isActive)}
+                    onClick={() => toggleStatus(u)}
                     className="text-[#1C3D20] text-xs font-medium hover:underline"
                   >
                     {u.isActive ? "Deactivate" : "Activate"}

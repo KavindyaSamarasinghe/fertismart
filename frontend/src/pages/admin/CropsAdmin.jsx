@@ -3,6 +3,7 @@ import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
 const empty = { name: "", scientificName: "", n: "", p: "", k: "", growingDurationDays: "" };
 
@@ -34,6 +35,8 @@ const CROP_COLUMNS = [
 ];
 
 export default function CropsAdmin() {
+  const toast = useToast();
+
   const [crops, setCrops] = useState([]);
   const [form, setForm] = useState(empty);
   const [showForm, setShowForm] = useState(false);
@@ -47,6 +50,8 @@ export default function CropsAdmin() {
     try {
       const { data } = await apiClient.get("/crops");
       setCrops(data.crops);
+    } catch (err) {
+      toast.error(errorMessage(err, "Unable to load crops. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -54,6 +59,7 @@ export default function CropsAdmin() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filtered = useMemo(() => {
@@ -62,7 +68,10 @@ export default function CropsAdmin() {
     return crops.filter((c) => c.name?.toLowerCase().includes(q) || c.scientificName?.toLowerCase().includes(q));
   }, [crops, search]);
 
-  const handleExport = () => downloadCsv("crops", CROP_COLUMNS, filtered);
+  const handleExport = () => {
+    downloadCsv("crops", CROP_COLUMNS, filtered);
+    toast.success(`Exported ${filtered.length} crop${filtered.length === 1 ? "" : "s"} to CSV.`);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,19 +83,25 @@ export default function CropsAdmin() {
         npkRequirementKgPerHa: { n: Number(form.n), p: Number(form.p), k: Number(form.k) },
         growingDurationDays: Number(form.growingDurationDays) || undefined,
       });
+      toast.success(`${form.name} added to the crop list.`);
       setForm(empty);
       setShowForm(false);
       load();
+    } catch (err) {
+      toast.error(errorMessage(err, "Failed to save the crop. Check the details and try again."));
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDeactivate = async (id) => {
+  const handleDeactivate = async (id, name) => {
     setDeactivatingId(id);
     try {
       await apiClient.delete(`/crops/${id}`);
+      toast.success(`${name} deactivated.`);
       load();
+    } catch (err) {
+      toast.error(errorMessage(err, "Failed to deactivate the crop."));
     } finally {
       setDeactivatingId(null);
     }
@@ -264,7 +279,7 @@ export default function CropsAdmin() {
                     <td className="px-6 py-3.5 text-right">
                       <button
                         type="button"
-                        onClick={() => handleDeactivate(c._id)}
+                        onClick={() => handleDeactivate(c._id, c.name)}
                         disabled={deactivatingId === c._id}
                         className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
                       >

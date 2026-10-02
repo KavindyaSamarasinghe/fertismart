@@ -1,6 +1,8 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
+import { ToastProvider } from "./context/ToastContext.jsx";
+
 import Landing from "./pages/Landing.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -22,95 +24,97 @@ import UsersAdmin from "./pages/admin/UsersAdmin.jsx";
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password/:token" element={<ResetPassword />} />
+    <ToastProvider>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
-      <Route
-        path="/farmer"
-        element={
-          <ProtectedRoute allowedRoles={["farmer"]}>
-            <FarmerDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/farmer/recommendations"
-        element={
-          <ProtectedRoute allowedRoles={["farmer"]}>
-            <Recommendations />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/farmer"
+          element={
+            <ProtectedRoute allowedRoles={["farmer"]}>
+              <FarmerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/farmer/recommendations"
+          element={
+            <ProtectedRoute allowedRoles={["farmer"]}>
+              <Recommendations />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/officer"
-        element={
-          <ProtectedRoute allowedRoles={["officer"]}>
-            <OfficerDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/officer/history"
-        element={
-          <ProtectedRoute allowedRoles={["officer"]}>
-            <ReviewHistory />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/officer/farms"
-        element={
-          <ProtectedRoute allowedRoles={["officer"]}>
-            <FarmsOverview />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/officer"
+          element={
+            <ProtectedRoute allowedRoles={["officer"]}>
+              <OfficerDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/officer/history"
+          element={
+            <ProtectedRoute allowedRoles={["officer"]}>
+              <ReviewHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/officer/farms"
+          element={
+            <ProtectedRoute allowedRoles={["officer"]}>
+              <FarmsOverview />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <AdminOverview />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/history"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <ReviewHistory />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/crops"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <CropsAdmin />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/fertilizers"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <FertilizersAdmin />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <ProtectedRoute allowedRoles={["admin"]}>
-            <UsersAdmin />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/history"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <ReviewHistory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/crops"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <CropsAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/fertilizers"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <FertilizersAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <UsersAdmin />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </ToastProvider>
   );
 }

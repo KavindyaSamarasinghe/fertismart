@@ -3,6 +3,7 @@ import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
 const empty = { name: "", type: "Nitrogen", n: "", p: "", k: "", costPerKgLKR: "", supplier: "" };
 
@@ -17,39 +18,63 @@ const FERTILIZER_COLUMNS = [
 ];
 
 export default function FertilizersAdmin() {
+  const toast = useToast();
+
   const [fertilizers, setFertilizers] = useState([]);
   const [form, setForm] = useState(empty);
   const [showForm, setShowForm] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const load = async () => {
-    const { data } = await apiClient.get("/fertilizers");
-    setFertilizers(data.fertilizers);
+    try {
+      const { data } = await apiClient.get("/fertilizers");
+      setFertilizers(data.fertilizers);
+    } catch (err) {
+      toast.error(errorMessage(err, "Unable to load fertilizers. Please try again."));
+    }
   };
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await apiClient.post("/fertilizers", {
-      name: form.name,
-      type: form.type,
-      nutrientContentPercent: { n: Number(form.n), p: Number(form.p), k: Number(form.k) },
-      costPerKgLKR: Number(form.costPerKgLKR),
-      supplier: form.supplier,
-    });
-    setForm(empty);
-    setShowForm(false);
-    load();
+    setSaving(true);
+    try {
+      await apiClient.post("/fertilizers", {
+        name: form.name,
+        type: form.type,
+        nutrientContentPercent: { n: Number(form.n), p: Number(form.p), k: Number(form.k) },
+        costPerKgLKR: Number(form.costPerKgLKR),
+        supplier: form.supplier,
+      });
+      toast.success(`${form.name} added to the fertilizer list.`);
+      setForm(empty);
+      setShowForm(false);
+      load();
+    } catch (err) {
+      toast.error(errorMessage(err, "Failed to save the fertilizer. Check the details and try again."));
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const handleDeactivate = async (id) => {
-    await apiClient.delete(`/fertilizers/${id}`);
-    load();
+  const handleDeactivate = async (id, name) => {
+    try {
+      await apiClient.delete(`/fertilizers/${id}`);
+      toast.success(`${name} deactivated.`);
+      load();
+    } catch (err) {
+      toast.error(errorMessage(err, "Failed to deactivate the fertilizer."));
+    }
   };
 
-  const handleExport = () => downloadCsv("fertilizers", FERTILIZER_COLUMNS, fertilizers);
+  const handleExport = () => {
+    downloadCsv("fertilizers", FERTILIZER_COLUMNS, fertilizers);
+    toast.success(`Exported ${fertilizers.length} fertilizer${fertilizers.length === 1 ? "" : "s"} to CSV.`);
+  };
 
   return (
     <DashboardLayout
@@ -129,9 +154,10 @@ export default function FertilizersAdmin() {
           />
           <button
             type="submit"
-            className="col-span-3 px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition"
+            disabled={saving}
+            className="col-span-3 px-4 py-2 rounded-lg bg-[#1C3D20] text-white text-sm font-medium hover:brightness-110 transition disabled:opacity-60"
           >
-            Save fertilizer
+            {saving ? "Saving..." : "Save fertilizer"}
           </button>
         </form>
       )}
@@ -160,7 +186,7 @@ export default function FertilizersAdmin() {
                 <td className="px-5 py-3 text-slate-600">{f.costPerKgLKR}</td>
                 <td className="px-5 py-3 text-right">
                   <button
-                    onClick={() => handleDeactivate(f._id)}
+                    onClick={() => handleDeactivate(f._id, f.name)}
                     className="text-red-600 text-xs font-medium hover:underline"
                   >
                     Deactivate

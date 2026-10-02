@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 
 const formatCurrency = (amount) =>
@@ -107,13 +107,13 @@ function SavingsChart({ optimizedCost, baselineCost }) {
 }
 
 export default function OfficerDashboard() {
+  const toast = useToast();
+
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [notes, setNotes] = useState({});
   const [reviewing, setReviewing] = useState({});
-  const [reviewError, setReviewError] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -137,8 +137,6 @@ export default function OfficerDashboard() {
   }, []);
 
   const handleReview = async (id, decision) => {
-    setReviewError((prev) => ({ ...prev, [id]: "" }));
-    setSuccessMessage("");
     setReviewing((prev) => ({ ...prev, [id]: true }));
 
     try {
@@ -155,18 +153,15 @@ export default function OfficerDashboard() {
         return updated;
       });
 
-      setSuccessMessage(
+      toast.success(
         decision === "approved"
           ? "Recommendation approved successfully."
           : "Recommendation rejected successfully."
       );
     } catch (err) {
-      setReviewError((prev) => ({
-        ...prev,
-        [id]:
-          err.response?.data?.message ||
-          "Unable to submit your review. Please try again.",
-      }));
+      toast.error(
+        errorMessage(err, "Unable to submit your review. Please try again.")
+      );
     } finally {
       setReviewing((prev) => ({ ...prev, [id]: false }));
     }
@@ -256,27 +251,6 @@ export default function OfficerDashboard() {
             accent="bg-lime-50"
           />
         </div>
-
-        {/* Success message */}
-        {successMessage && (
-          <div
-            role="status"
-            className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-          >
-            <span className="font-bold" aria-hidden="true">
-              ✓
-            </span>
-            <p>{successMessage}</p>
-            <button
-              type="button"
-              onClick={() => setSuccessMessage("")}
-              className="ml-auto font-medium text-emerald-800 hover:text-emerald-950"
-              aria-label="Dismiss message"
-            >
-              ×
-            </button>
-          </div>
-        )}
 
         {/* Loading state */}
         {loading && (
@@ -618,15 +592,6 @@ export default function OfficerDashboard() {
                         }
                         className="mt-3 w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 placeholder:text-slate-400 transition focus:border-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-700/10 disabled:bg-slate-50"
                       />
-
-                      {reviewError[rec._id] && (
-                        <p
-                          role="alert"
-                          className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700"
-                        >
-                          {reviewError[rec._id]}
-                        </p>
-                      )}
 
                       <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <p className="text-xs text-slate-500">

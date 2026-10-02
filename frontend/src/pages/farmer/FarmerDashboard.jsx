@@ -1,9 +1,8 @@
-
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
+import SavingsSummary from "../../components/SavingsSummary.jsx"; // SAVINGS
 import apiClient from "../../api/axiosClient.js";
-import SavingsSummary from "../../components/SavingsSummary.jsx";
 
 const SOIL_TYPES = [
   "Red-Yellow Podzolic",
@@ -268,7 +267,7 @@ export default function FarmerDashboard() {
         </section>
 
         {/* Savings dashboard */}
-        <SavingsSummary />
+        <SavingsSummary /> {/* SAVINGS */}
 
         {/* Add farm form */}
         {showForm && (
