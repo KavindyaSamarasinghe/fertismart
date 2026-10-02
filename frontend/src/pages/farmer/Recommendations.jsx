@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 import PdfButton from "../../components/PdfButton";
 
@@ -179,6 +180,8 @@ function SavingsChart({ optimizedCost, baselineCost }) {
 }
 
 export default function Recommendations() {
+  const toast = useToast();
+
   const [searchParams] = useSearchParams();
   const preselectedFarmId = searchParams.get("farmId") || "";
 
@@ -198,7 +201,6 @@ export default function Recommendations() {
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [pageError, setPageError] = useState("");
-  const [error, setError] = useState("");
   const [result, setResult] = useState(null);
 
   // Used by "New plan for this farm": selects the farm and scrolls to the form.
@@ -287,7 +289,6 @@ export default function Recommendations() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setResult(null);
     setLoading(true);
 
@@ -306,6 +307,7 @@ export default function Recommendations() {
       );
 
       setResult(data.recommendation);
+      toast.success("Recommendation generated and sent for officer review.");
 
       // Refresh history after a recommendation is generated.
       try {
@@ -314,9 +316,8 @@ export default function Recommendations() {
         // Keep the generated result visible if history refresh fails.
       }
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Failed to generate recommendation. Please try again."
+      toast.error(
+        errorMessage(err, "Failed to generate recommendation. Please try again.")
       );
     } finally {
       setLoading(false);
@@ -454,15 +455,6 @@ export default function Recommendations() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
-              {error && (
-                <div
-                  role="alert"
-                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-                >
-                  {error}
-                </div>
-              )}
-
               {farms.length === 0 && !initialLoading && (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
                   <p className="text-sm font-medium text-amber-800">

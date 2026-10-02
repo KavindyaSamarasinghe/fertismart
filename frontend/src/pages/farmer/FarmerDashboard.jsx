@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
-import SavingsSummary from "../../components/SavingsSummary.jsx"; // SAVINGS
+import SavingsSummary from "../../components/SavingsSummary.jsx";
 import apiClient from "../../api/axiosClient.js";
+import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
 const SOIL_TYPES = [
   "Red-Yellow Podzolic",
@@ -97,11 +98,12 @@ const inputClass =
   "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#287650] focus:ring-4 focus:ring-[#287650]/10";
 
 export default function FarmerDashboard() {
+  const toast = useToast();
+
   const [farms, setFarms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
   const [loadError, setLoadError] = useState("");
 
   const [form, setForm] = useState({ ...INITIAL_FORM });
@@ -150,18 +152,14 @@ export default function FarmerDashboard() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
 
     const actualSoilType =
       form.soilType === "Other"
         ? form.customSoilType.trim()
         : form.soilType;
 
-    if (
-      form.soilType === "Other" &&
-      !actualSoilType
-    ) {
-      setError("Please enter your soil type.");
+    if (form.soilType === "Other" && !actualSoilType) {
+      toast.error("Please enter your soil type.");
       return;
     }
 
@@ -175,14 +173,14 @@ export default function FarmerDashboard() {
         soilType: actualSoilType,
       });
 
+      toast.success(`${form.farmName.trim() || "Farm"} added successfully.`);
+
       setForm({ ...INITIAL_FORM });
       setShowForm(false);
 
       await loadFarms();
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Failed to add farm."
-      );
+      toast.error(errorMessage(err, "Failed to add farm. Please try again."));
     } finally {
       setSaving(false);
     }
@@ -205,7 +203,6 @@ export default function FarmerDashboard() {
 
   const closeForm = () => {
     setShowForm(false);
-    setError("");
     setForm({ ...INITIAL_FORM });
   };
 
@@ -220,7 +217,6 @@ export default function FarmerDashboard() {
             if (showForm) {
               closeForm();
             } else {
-              setError("");
               setShowForm(true);
             }
           }}
@@ -267,7 +263,7 @@ export default function FarmerDashboard() {
         </section>
 
         {/* Savings dashboard */}
-        <SavingsSummary /> {/* SAVINGS */}
+        <SavingsSummary />
 
         {/* Add farm form */}
         {showForm && (
@@ -290,15 +286,6 @@ export default function FarmerDashboard() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-5 sm:p-7">
-              {error && (
-                <div
-                  role="alert"
-                  className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-                >
-                  {error}
-                </div>
-              )}
-
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {/* Farm name */}
                 <div>
