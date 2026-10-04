@@ -1,0 +1,86 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "loading": "Loading...",
+    "tryAgain": "Try again",
+    "signOut": "Sign out",
+    "region": "Region",
+    "hectares": "hectares"
+  },
+  "portal": {
+    "farmer": "Farmer Portal",
+    "officer": "Officer Portal",
+    "admin": "Admin Portal"
+  },
+  "nav": {
+    "myFarms": "My Farms",
+    "recommendations": "Recommendations",
+    "pendingReviews": "Pending Reviews",
+    "reviewHistory": "Review History",
+    "farmsOverview": "Farms Overview",
+    "overview": "Overview",
+    "reviewAudit": "Review Audit",
+    "crops": "Crops",
+    "fertilizers": "Fertilizers",
+    "users": "Users"
+  },
+  "farmer": {
+    "title": "My Farms",
+    "subtitle": "Manage your registered plots and get tailored fertilizer advice.",
+    "addFarm": "Add farm",
+    "registeredFarms": "Registered farms",
+    "totalArea": "Total cultivated area",
+    "soilDetails": "Soil details added",
+    "yourFarms": "Your registered farms",
+    "getRecommendation": "Get recommendation",
+    "soilNotAdded": "Soil type not added",
+    "registerNewFarm": "Register a new farm",
+    "farmName": "Farm name",
+    "farmArea": "Farm area (hectares)",
+    "soilType": "Soil type",
+    "saveFarm": "Save farm"
+  },
+  "rec": {
+    "title": "Fertilizer Recommendations",
+    "subtitle": "Generate cost-optimized, weather-adjusted fertilizer plans for your crops.",
+    "newRecommendation": "New recommendation",
+    "selectFarm": "Select farm",
+    "selectCrop": "Select crop",
+    "chooseFarm": "Choose your farm",
+    "chooseCrop": "Choose your crop",
+    "generate": "Generate recommendation",
+    "optimizing": "Optimizing fertilizer mix...",
+    "history": "Recommendation history",
+    "fertilizerMix": "Fertilizer mix",
+    "fertilizer": "Fertilizer",
+    "quantity": "Quantity",
+    "cost": "Cost",
+    "estimatedCost": "Estimated fertilizer cost",
+    "downloadPdf": "Download PDF",
+    "officerFeedback": "Officer feedback",
+    "status": {
+      "pending_review": "Pending Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "rainfall": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "heavy": "Heavy"
+    }
+  },
+  "auth": {
+    "welcomeBack": "Welcome back",
+    "signInSubtitle": "Sign in to your account to continue",
+    "email": "Email address",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "newHere": "New to FertiSmart SL?",
+    "createAccount": "Create an account",
+    "logIn": "Log in",
+    "getStarted": "Get started"
+  }
+}

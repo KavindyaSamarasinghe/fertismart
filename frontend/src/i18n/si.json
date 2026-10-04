@@ -1,0 +1,86 @@
+{
+  "common": {
+    "cancel": "අවලංගු කරන්න",
+    "save": "සුරකින්න",
+    "loading": "පූරණය වෙමින්...",
+    "tryAgain": "නැවත උත්සාහ කරන්න",
+    "signOut": "ඉවත් වන්න",
+    "region": "ප්‍රදේශය",
+    "hectares": "හෙක්ටයාර"
+  },
+  "portal": {
+    "farmer": "ගොවි ද්වාරය",
+    "officer": "නිලධාරී ද්වාරය",
+    "admin": "පරිපාලක ද්වාරය"
+  },
+  "nav": {
+    "myFarms": "මගේ ගොවිපළවල්",
+    "recommendations": "නිර්දේශ",
+    "pendingReviews": "සමාලෝචන බලාපොරොත්තුවෙන්",
+    "reviewHistory": "සමාලෝචන ඉතිහාසය",
+    "farmsOverview": "ගොවිපළ දළ විශ්ලේෂණය",
+    "overview": "දළ විශ්ලේෂණය",
+    "reviewAudit": "සමාලෝචන විගණනය",
+    "crops": "බෝග",
+    "fertilizers": "පොහොර",
+    "users": "පරිශීලකයින්"
+  },
+  "farmer": {
+    "title": "මගේ ගොවිපළවල්",
+    "subtitle": "ඔබේ ලියාපදිංචි කළ ඉඩම් කළමනාකරණය කර ගැළපෙන පොහොර උපදෙස් ලබා ගන්න.",
+    "addFarm": "ගොවිපළක් එක් කරන්න",
+    "registeredFarms": "ලියාපදිංචි ගොවිපළවල්",
+    "totalArea": "මුළු වගා කළ ප්‍රමාණය",
+    "soilDetails": "පාංශු තොරතුරු එක් කර ඇත",
+    "yourFarms": "ඔබේ ලියාපදිංචි ගොවිපළවල්",
+    "getRecommendation": "නිර්දේශයක් ලබා ගන්න",
+    "soilNotAdded": "පාංශු වර්ගය එක් කර නැත",
+    "registerNewFarm": "නව ගොවිපළක් ලියාපදිංචි කරන්න",
+    "farmName": "ගොවිපළේ නම",
+    "farmArea": "ගොවිපළේ ප්‍රමාණය (හෙක්ටයාර)",
+    "soilType": "පාංශු වර්ගය",
+    "saveFarm": "ගොවිපළ සුරකින්න"
+  },
+  "rec": {
+    "title": "පොහොර නිර්දේශ",
+    "subtitle": "ඔබේ බෝග සඳහා අඩු වියදම් සහිත, කාලගුණයට අනුවර්තනය කළ පොහොර සැලසුම් සකසන්න.",
+    "newRecommendation": "නව නිර්දේශය",
+    "selectFarm": "ගොවිපළ තෝරන්න",
+    "selectCrop": "බෝගය තෝරන්න",
+    "chooseFarm": "ඔබේ ගොවිපළ තෝරන්න",
+    "chooseCrop": "ඔබේ බෝගය තෝරන්න",
+    "generate": "නිර්දේශය සකසන්න",
+    "optimizing": "පොහොර මිශ්‍රණය ප්‍රශස්ත කරමින්...",
+    "history": "නිර්දේශ ඉතිහාසය",
+    "fertilizerMix": "පොහොර මිශ්‍රණය",
+    "fertilizer": "පොහොර",
+    "quantity": "ප්‍රමාණය",
+    "cost": "වියදම",
+    "estimatedCost": "ඇස්තමේන්තුගත පොහොර වියදම",
+    "downloadPdf": "PDF බාගන්න",
+    "officerFeedback": "නිලධාරියාගේ ප්‍රතිචාරය",
+    "status": {
+      "pending_review": "සමාලෝචනය බලාපොරොත්තුවෙන්",
+      "approved": "අනුමත කළා",
+      "rejected": "ප්‍රතික්ෂේප කළා"
+    },
+    "rainfall": {
+      "low": "අඩු",
+      "moderate": "මධ්‍යම",
+      "heavy": "වැඩි"
+    }
+  },
+  "auth": {
+    "welcomeBack": "නැවත සාදරයෙන් පිළිගනිමු",
+    "signInSubtitle": "ඉදිරියට යාමට ඔබේ ගිණුමට පිවිසෙන්න",
+    "email": "විද්‍යුත් තැපැල් ලිපිනය",
+    "password": "මුරපදය",
+    "forgotPassword": "මුරපදය අමතකද?",
+    "signIn": "පිවිසෙන්න",
+    "signingIn": "පිවිසෙමින්...",
+    "newHere": "FertiSmart SL වලට අලුත්ද?",
+    "createAccount": "ගිණුමක් සාදන්න",
+    "logIn": "පිවිසෙන්න",
+    "getStarted": "ආරම්භ කරන්න"
+  }
+}
