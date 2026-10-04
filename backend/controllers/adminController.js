@@ -29,6 +29,12 @@ exports.createStaffUser = async (req, res) => {
 
 exports.setUserStatus = async (req, res) => {
   const { isActive } = req.body;
+
+  // Prevent an admin from locking themselves out
+  if (String(req.params.id) === String(req.user._id) && isActive === false) {
+    return res.status(400).json({ message: "You cannot deactivate your own account" });
+  }
+
   const user = await User.findByIdAndUpdate(req.params.id, { isActive }, { new: true });
   if (!user) return res.status(404).json({ message: "User not found" });
   res.json({ user: { id: user._id, name: user.name, isActive: user.isActive } });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
+import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
@@ -17,6 +18,9 @@ const FERTILIZER_COLUMNS = [
   { header: "Supplier", value: (f) => f.supplier },
 ];
 
+const inputClass =
+  "px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]";
+
 export default function FertilizersAdmin() {
   const toast = useToast();
 
@@ -24,6 +28,8 @@ export default function FertilizersAdmin() {
   const [form, setForm] = useState(empty);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [confirmFert, setConfirmFert] = useState(null); // { id, name }
+  const [deactivating, setDeactivating] = useState(false);
 
   const load = async () => {
     try {
@@ -61,13 +67,18 @@ export default function FertilizersAdmin() {
     }
   };
 
-  const handleDeactivate = async (id, name) => {
+  const handleDeactivate = async () => {
+    if (!confirmFert) return;
+    setDeactivating(true);
     try {
-      await apiClient.delete(`/fertilizers/${id}`);
-      toast.success(`${name} deactivated.`);
+      await apiClient.delete(`/fertilizers/${confirmFert.id}`);
+      toast.success(`${confirmFert.name} deactivated.`);
       load();
     } catch (err) {
       toast.error(errorMessage(err, "Failed to deactivate the fertilizer."));
+    } finally {
+      setDeactivating(false);
+      setConfirmFert(null);
     }
   };
 
@@ -102,12 +113,12 @@ export default function FertilizersAdmin() {
             placeholder="Fertilizer name"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <select
             value={form.type}
             onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           >
             <option>Nitrogen</option>
             <option>Phosphorus</option>
@@ -120,7 +131,7 @@ export default function FertilizersAdmin() {
             placeholder="Cost per kg (LKR)"
             value={form.costPerKgLKR}
             onChange={(e) => setForm({ ...form, costPerKgLKR: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             required
@@ -128,7 +139,7 @@ export default function FertilizersAdmin() {
             placeholder="N content (%)"
             value={form.n}
             onChange={(e) => setForm({ ...form, n: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             required
@@ -136,7 +147,7 @@ export default function FertilizersAdmin() {
             placeholder="P content (%)"
             value={form.p}
             onChange={(e) => setForm({ ...form, p: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             required
@@ -144,13 +155,13 @@ export default function FertilizersAdmin() {
             placeholder="K content (%)"
             value={form.k}
             onChange={(e) => setForm({ ...form, k: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             placeholder="Supplier (optional)"
             value={form.supplier}
             onChange={(e) => setForm({ ...form, supplier: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <button
             type="submit"
@@ -186,7 +197,7 @@ export default function FertilizersAdmin() {
                 <td className="px-5 py-3 text-slate-600">{f.costPerKgLKR}</td>
                 <td className="px-5 py-3 text-right">
                   <button
-                    onClick={() => handleDeactivate(f._id, f.name)}
+                    onClick={() => setConfirmFert({ id: f._id, name: f.name })}
                     className="text-red-600 text-xs font-medium hover:underline"
                   >
                     Deactivate
@@ -197,6 +208,16 @@ export default function FertilizersAdmin() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={Boolean(confirmFert)}
+        title="Deactivate this fertilizer?"
+        message={`${confirmFert?.name ?? "This fertilizer"} will be excluded from the Simplex solver, so new recommendations may cost more or become infeasible. Existing recommendations are not affected.`}
+        confirmLabel="Deactivate"
+        busy={deactivating}
+        onConfirm={handleDeactivate}
+        onCancel={() => setConfirmFert(null)}
+      />
     </DashboardLayout>
   );
 }

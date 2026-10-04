@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
 import Pagination from "../../components/Pagination.jsx";
+import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import apiClient from "../../api/axiosClient.js";
 import usePagination from "../../hooks/usePagination.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 
 const empty = { name: "", email: "", password: "", role: "officer" };
@@ -20,13 +22,20 @@ const USER_COLUMNS = [
   { header: "Created", value: (u) => (u.createdAt ? new Date(u.createdAt).toISOString().slice(0, 10) : "") },
 ];
 
+const inputClass =
+  "px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]";
+
 export default function UsersAdmin() {
   const toast = useToast();
+  const { user: me } = useAuth();
+  const myId = String(me?.id || me?._id || "");
 
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState(empty);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [confirmUser, setConfirmUser] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   const { page, setPage, totalPages, pageItems, total, pageSize } = usePagination(users, 10);
 
@@ -62,14 +71,21 @@ export default function UsersAdmin() {
   };
 
   const toggleStatus = async (user) => {
+    setUpdating(true);
     try {
       await apiClient.patch(`/admin/users/${user._id}/status`, { isActive: !user.isActive });
       toast.success(`${user.name}'s account ${user.isActive ? "deactivated" : "activated"}.`);
       load();
     } catch (err) {
       toast.error(errorMessage(err, "Failed to update the account status."));
+    } finally {
+      setUpdating(false);
+      setConfirmUser(null);
     }
   };
+
+  // Confirm only when deactivating; activating is harmless
+  const handleStatusClick = (u) => (u.isActive ? setConfirmUser(u) : toggleStatus(u));
 
   // Exports every user, not just the current page
   const handleExport = () => {
@@ -103,7 +119,7 @@ export default function UsersAdmin() {
             placeholder="Full name"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             required
@@ -111,7 +127,7 @@ export default function UsersAdmin() {
             placeholder="Email"
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <input
             required
@@ -120,12 +136,12 @@ export default function UsersAdmin() {
             placeholder="Temporary password"
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           />
           <select
             value={form.role}
             onChange={(e) => setForm({ ...form, role: e.target.value })}
-            className="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#1C3D20]"
+            className={inputClass}
           >
             <option value="officer">Agricultural Officer</option>
             <option value="admin">Administrator</option>
@@ -152,32 +168,40 @@ export default function UsersAdmin() {
             </tr>
           </thead>
           <tbody>
-            {pageItems.map((u) => (
-              <tr key={u._id} className="border-t border-slate-100">
-                <td className="px-5 py-3 font-medium text-slate-900">{u.name}</td>
-                <td className="px-5 py-3 text-slate-600">{u.email}</td>
-                <td className="px-5 py-3 text-slate-600 capitalize">{u.role}</td>
-                <td className="px-5 py-3">
-                  <span
-                    className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
-                      u.isActive
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                        : "bg-slate-100 text-slate-500 border-slate-200"
-                    }`}
-                  >
-                    {u.isActive ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td className="px-5 py-3 text-right">
-                  <button
-                    onClick={() => toggleStatus(u)}
-                    className="text-[#1C3D20] text-xs font-medium hover:underline"
-                  >
-                    {u.isActive ? "Deactivate" : "Activate"}
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {pageItems.map((u) => {
+              const isSelf = String(u._id) === myId;
+              return (
+                <tr key={u._id} className="border-t border-slate-100">
+                  <td className="px-5 py-3 font-medium text-slate-900">
+                    {u.name}
+                    {isSelf && <span className="ml-2 text-xs font-normal text-slate-400">(you)</span>}
+                  </td>
+                  <td className="px-5 py-3 text-slate-600">{u.email}</td>
+                  <td className="px-5 py-3 text-slate-600 capitalize">{u.role}</td>
+                  <td className="px-5 py-3">
+                    <span
+                      className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+                        u.isActive
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-slate-100 text-slate-500 border-slate-200"
+                      }`}
+                    >
+                      {u.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    {!isSelf && (
+                      <button
+                        onClick={() => handleStatusClick(u)}
+                        className="text-[#1C3D20] text-xs font-medium hover:underline"
+                      >
+                        {u.isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -188,6 +212,16 @@ export default function UsersAdmin() {
         total={total}
         pageSize={pageSize}
         onChange={setPage}
+      />
+
+      <ConfirmDialog
+        open={Boolean(confirmUser)}
+        title="Deactivate this account?"
+        message={`${confirmUser?.name ?? "This user"} (${confirmUser?.email ?? ""}) will no longer be able to sign in. You can reactivate the account at any time.`}
+        confirmLabel="Deactivate"
+        busy={updating}
+        onConfirm={() => toggleStatus(confirmUser)}
+        onCancel={() => setConfirmUser(null)}
       />
     </DashboardLayout>
   );

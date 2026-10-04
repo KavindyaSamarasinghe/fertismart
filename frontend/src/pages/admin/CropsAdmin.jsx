@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import ExportCsvButton from "../../components/ExportCsvButton.jsx";
+import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { downloadCsv } from "../../utils/exportCsv.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
@@ -44,6 +45,7 @@ export default function CropsAdmin() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [deactivatingId, setDeactivatingId] = useState(null);
+  const [confirmCrop, setConfirmCrop] = useState(null); // { id, name }
 
   const load = async () => {
     setLoading(true);
@@ -94,7 +96,9 @@ export default function CropsAdmin() {
     }
   };
 
-  const handleDeactivate = async (id, name) => {
+  const handleDeactivate = async () => {
+    if (!confirmCrop) return;
+    const { id, name } = confirmCrop;
     setDeactivatingId(id);
     try {
       await apiClient.delete(`/crops/${id}`);
@@ -104,6 +108,7 @@ export default function CropsAdmin() {
       toast.error(errorMessage(err, "Failed to deactivate the crop."));
     } finally {
       setDeactivatingId(null);
+      setConfirmCrop(null);
     }
   };
 
@@ -149,10 +154,7 @@ export default function CropsAdmin() {
       }
     >
       {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className="mb-6 rounded-xl border border-slate-200 bg-white p-6"
-        >
+        <form onSubmit={handleSubmit} className="mb-6 rounded-xl border border-slate-200 bg-white p-6">
           <div className="mb-5 flex items-center gap-3">
             <span className="grid h-10 w-10 flex-none place-items-center rounded-full bg-emerald-50 text-[#1C3D20]">
               <Icon className="h-5 w-5"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" /></Icon>
@@ -279,7 +281,7 @@ export default function CropsAdmin() {
                     <td className="px-6 py-3.5 text-right">
                       <button
                         type="button"
-                        onClick={() => handleDeactivate(c._id, c.name)}
+                        onClick={() => setConfirmCrop({ id: c._id, name: c.name })}
                         disabled={deactivatingId === c._id}
                         className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
                       >
@@ -297,6 +299,16 @@ export default function CropsAdmin() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={Boolean(confirmCrop)}
+        title="Deactivate this crop?"
+        message={`${confirmCrop?.name ?? "This crop"} will no longer appear in the crop list when farmers request recommendations. Existing recommendations are not affected.`}
+        confirmLabel="Deactivate"
+        busy={Boolean(deactivatingId)}
+        onConfirm={handleDeactivate}
+        onCancel={() => setConfirmCrop(null)}
+      />
     </DashboardLayout>
   );
 }

@@ -3,6 +3,7 @@ import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
+import SoilBasis from "../../components/SoilBasis.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 
 const formatCurrency = (amount) =>
@@ -480,6 +481,9 @@ export default function OfficerDashboard() {
                         </p>
                       </div>
                     </div>
+
+                    {/* NEW: soil basis */}
+                    <SoilBasis rec={rec} className="mt-3" />
 
                     {/* Cost comparison chart */}
                     {typeof rec.baselineCostLKR === "number" && rec.baselineCostLKR > 0 && (

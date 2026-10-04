@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import PdfButton from "../../components/PdfButton.jsx";
 import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
+import SoilBasis from "../../components/SoilBasis.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -267,6 +268,9 @@ export default function ReviewHistory() {
                                       Submitted: <span className="font-semibold text-slate-700">{formatDateTime(rec.createdAt)}</span>
                                     </p>
                                   </div>
+
+                                  {/* NEW: soil basis */}
+                                  <SoilBasis rec={rec} className="mt-4" />
 
                                   {rec.status === "approved" && (
                                     <div className="mt-4">

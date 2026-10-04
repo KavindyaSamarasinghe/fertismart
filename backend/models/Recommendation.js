@@ -18,6 +18,16 @@ const RecommendationSchema = new mongoose.Schema(
     rainfallMm: { type: Number },
     rainfallSource: { type: String, enum: ["live", "manual", "fallback"] },
 
+    // Soil-type adjustment recorded for traceability
+    soilType: { type: String, default: "" },
+    soilAdjustmentApplied: { type: Boolean, default: false },
+    soilMultipliers: {
+      n: { type: Number, default: 1 },
+      p: { type: Number, default: 1 },
+      k: { type: Number, default: 1 },
+    },
+    soilNote: { type: String, default: "" },
+
     adjustedRequirementKgPerHa: {
       n: Number,
       p: Number,

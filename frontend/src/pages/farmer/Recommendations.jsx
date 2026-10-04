@@ -8,6 +8,7 @@ import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 import PdfButton from "../../components/PdfButton";
 import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
+import SoilBasis from "../../components/SoilBasis.jsx";
 
 const STATUS_STYLES = {
   pending_review: "bg-amber-50 text-amber-700 border-amber-200",

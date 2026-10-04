@@ -1,4 +1,3 @@
-
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 @tailwind base;
@@ -7,6 +6,7 @@
 
 html {
   scroll-behavior: smooth;
+  font-size: 112.5%; /* 18px base instead of 16px: scales all text and spacing */
 }
 
 body {

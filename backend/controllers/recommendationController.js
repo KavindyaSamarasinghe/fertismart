@@ -12,6 +12,7 @@ const {
   RAINFALL_BANDS,
   RAINFALL_LOOKBACK_DAYS,
 } = require("../utils/rainfall");
+const { getSoilAdjustment, filterFertilizersForSoil } = require("../utils/soilAdjustment");
 const {
   computeStraightFertilizerBaseline,
   computeCompoundBaseline,
@@ -21,6 +22,8 @@ const {
 // Manual override is for officers
 const canUseManualRainfall = (user) =>
   user.role === "officer" || process.env.ALLOW_MANUAL_RAINFALL === "true";
+
+const round2 = (v) => Math.round(v * 100) / 100;
 
 exports.generateRecommendation = async (req, res) => {
   try {
@@ -58,22 +61,30 @@ exports.generateRecommendation = async (req, res) => {
       }
     }
 
+    // Rainfall adjustment (N leaching)
     const { rainfallMm, source: rainfallSource } = await fetchRainfallMm(farm, override);
     const { class: rainfallClass, multiplier } = classifyRainfall(rainfallMm);
 
+    // Soil-type adjustment (neutral x1.0 when the soil type is blank/custom)
+    const soil = getSoilAdjustment(farm.soilType);
+
     const adjustedRequirement = {
-      n: Math.round(crop.npkRequirementKgPerHa.n * multiplier * 100) / 100,
-      p: crop.npkRequirementKgPerHa.p,
-      k: crop.npkRequirementKgPerHa.k,
+      n: round2(crop.npkRequirementKgPerHa.n * multiplier * soil.multipliers.n),
+      p: round2(crop.npkRequirementKgPerHa.p * soil.multipliers.p),
+      k: round2(crop.npkRequirementKgPerHa.k * soil.multipliers.k),
     };
 
     const scaledRequirement = {
-      n: Math.round(adjustedRequirement.n * farm.areaHectares * 100) / 100,
-      p: Math.round(adjustedRequirement.p * farm.areaHectares * 100) / 100,
-      k: Math.round(adjustedRequirement.k * farm.areaHectares * 100) / 100,
+      n: round2(adjustedRequirement.n * farm.areaHectares),
+      p: round2(adjustedRequirement.p * farm.areaHectares),
+      k: round2(adjustedRequirement.k * farm.areaHectares),
     };
 
-    const solverResult = solveFertilizerMix(fertilizers, scaledRequirement);
+    // Soil-suitable fertilizers feed both the solver and the baselines,
+    // so the savings comparison stays fair.
+    const usableFertilizers = filterFertilizersForSoil(fertilizers, soil);
+
+    const solverResult = solveFertilizerMix(usableFertilizers, scaledRequirement);
 
     if (solverResult.status === "infeasible") {
       return res.status(422).json({
@@ -85,8 +96,8 @@ exports.generateRecommendation = async (req, res) => {
       });
     }
 
-    const compoundBaseline = computeCompoundBaseline(fertilizers, scaledRequirement);
-    const straightBaseline = computeStraightFertilizerBaseline(fertilizers, scaledRequirement);
+    const compoundBaseline = computeCompoundBaseline(usableFertilizers, scaledRequirement);
+    const straightBaseline = computeStraightFertilizerBaseline(usableFertilizers, scaledRequirement);
 
     const { savingsLKR, savingsPercent } = compoundBaseline.feasible
       ? computeSavings(solverResult.totalCostLKR, compoundBaseline.totalCostLKR)
@@ -100,6 +111,10 @@ exports.generateRecommendation = async (req, res) => {
       nitrogenLeachingMultiplier: multiplier,
       rainfallMm,
       rainfallSource,
+      soilType: soil.matched ? soil.soilType : farm.soilType || "",
+      soilAdjustmentApplied: soil.matched,
+      soilMultipliers: soil.multipliers,
+      soilNote: soil.note,
       adjustedRequirementKgPerHa: adjustedRequirement,
       fertilizerMix: solverResult.mix.map((m) => ({
         fertilizer: m.fertilizerId,
