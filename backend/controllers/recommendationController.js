@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const PDFDocument = require("pdfkit");
 const Recommendation = require("../models/Recommendation");
 const Farm = require("../models/Farm");
@@ -17,7 +18,7 @@ const {
   computeSavings,
 } = require("../utils/baselineComparison");
 
-// Manual override is for officers, or for demos when explicitly enabled in .env
+// Manual override is for officers
 const canUseManualRainfall = (user) =>
   user.role === "officer" || process.env.ALLOW_MANUAL_RAINFALL === "true";
 
@@ -156,14 +157,29 @@ exports.reviewRecommendation = async (req, res) => {
       return res.status(400).json({ message: "Review notes are required when rejecting a recommendation" });
     }
 
-    const recommendation = await Recommendation.findById(req.params.id);
-    if (!recommendation) return res.status(404).json({ message: "Recommendation not found" });
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ message: "Recommendation not found" });
+    }
 
-    recommendation.status = decision;
-    recommendation.reviewedBy = req.user._id;
-    recommendation.reviewNotes = notes;
-    recommendation.reviewedAt = new Date();
-    await recommendation.save();
+
+    const recommendation = await Recommendation.findOneAndUpdate(
+      { _id: req.params.id, status: "pending_review" },
+      {
+        status: decision,
+        reviewedBy: req.user._id,
+        reviewNotes: notes,
+        reviewedAt: new Date(),
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!recommendation) {
+      const existing = await Recommendation.findById(req.params.id).select("status");
+      if (!existing) return res.status(404).json({ message: "Recommendation not found" });
+      return res.status(409).json({
+        message: `This recommendation has already been ${existing.status} and can no longer be reviewed`,
+      });
+    }
 
     res.json({ recommendation });
   } catch (err) {
@@ -171,13 +187,7 @@ exports.reviewRecommendation = async (req, res) => {
   }
 };
 
-/**
- * Review history / audit trail.
- * - Officers see only the recommendations THEY reviewed.
- * - Admins see every reviewed recommendation across all officers.
- * Query params (all optional): status=approved|rejected, search=<farmer name/email>,
- * from=YYYY-MM-DD, to=YYYY-MM-DD (filters on the review date).
- */
+
 exports.reviewHistory = async (req, res) => {
   try {
     const { status, search, from, to } = req.query;
