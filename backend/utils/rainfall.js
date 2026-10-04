@@ -1,14 +1,3 @@
-/**
- * Maps a rainfall figure (mm) to a discrete classification and the
- * corresponding nitrogen-leaching multiplier applied before the
- * Simplex optimizer runs.
- *
- * Rainfall data is sourced from Open-Meteo (https://open-meteo.com), a free
- * weather API that requires no API key. It sums daily precipitation over the
- * past RAINFALL_LOOKBACK_DAYS days, using the farm's own coordinates when
- * valid, otherwise the region centre.
- */
-
 const RAINFALL_BANDS = [
   { class: "low", maxMm: 50, multiplier: 1.0 },
   { class: "moderate", maxMm: 150, multiplier: 1.1 },
@@ -26,8 +15,6 @@ const REGION_COORDS = {
   Bandarawela: { lat: 6.8319, lon: 80.9925 },
 };
 
-// Rough bounding box of Sri Lanka. Stops a mistyped coordinate from
-// silently fetching rainfall for somewhere else in the world.
 const SRI_LANKA_BOUNDS = { minLat: 5.8, maxLat: 9.9, minLon: 79.5, maxLon: 82.0 };
 
 function classifyRainfall(rainfallMm) {
@@ -37,7 +24,6 @@ function classifyRainfall(rainfallMm) {
   return RAINFALL_BANDS.find((b) => rainfallMm <= b.maxMm);
 }
 
-// Prefer the farm's own coordinates; otherwise use the region centre.
 function resolveCoords(farm) {
   const lat = Number(farm?.location?.lat);
   const lon = Number(farm?.location?.lng);
@@ -56,9 +42,6 @@ function resolveCoords(farm) {
   return REGION_COORDS[farm?.region] || REGION_COORDS["Nuwara Eliya"];
 }
 
-/**
- * Returns { rainfallMm, source } where source is "live" | "manual" | "fallback".
- */
 async function fetchRainfallMm(farm, manualOverrideMm) {
   if (typeof manualOverrideMm === "number") {
     return { rainfallMm: manualOverrideMm, source: "manual" };

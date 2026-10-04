@@ -1,33 +1,3 @@
-/**
- * Computes "conventional" baseline costs to compare against the
- * LP-optimized fertilizer mix, quantifying the actual value the Simplex
- * solver adds rather than only asserting that it optimizes.
- *
- * Two baseline models are provided:
- *
- * 1. computeStraightFertilizerBaseline — a farmer sources the cheapest
- *    available single-nutrient ("straight") fertilizer independently for
- *    each of N, P and K. This represents a best-case manual approach IF the
- *    farmer already has precise nutrient-content knowledge and a calculator.
- *
- * 2. computeCompoundBaseline (PRIMARY / recommended) — a farmer applies a
- *    single general-purpose compound fertilizer (e.g. NPK 15:15:15) at
- *    whatever rate covers their most pressing nutrient deficiency, with no
- *    ability to independently control each nutrient. This is the more
- *    realistic model of how fertilizer is typically applied without a
- *    decision-support tool, and is the one used as the primary comparison.
- *
- * Note: with some fertilizer price catalogues, straight fertilizers may be
- * cheaper per unit of nutrient than every available compound, in which case
- * the LP-optimized solution and the straight-fertilizer baseline coincide
- * exactly (zero measured savings) — this is a correct, expected outcome of
- * the optimization, not a bug, and is itself a discussable observation
- * about the fertilizer catalogue's pricing. The compound baseline exists
- * precisely because it does not suffer from this coincidence, since a
- * single fixed-ratio compound essentially never matches a crop's specific
- * N:P:K requirement ratio exactly.
- */
-
 function computeStraightFertilizerBaseline(fertilizers, requirement) {
   const nutrients = ["n", "p", "k"];
   const breakdown = [];
@@ -94,9 +64,6 @@ function computeCompoundBaseline(fertilizers, requirement) {
     };
   }
 
-  // For each compound, applying it at a flat rate means the quantity is
-  // driven by whichever nutrient is proportionally hardest to satisfy given
-  // that compound's fixed ratio. The other nutrients end up over-supplied.
   const options = compounds.map((f) => {
     let quantityKg = 0;
     let bindingNutrient = null;
@@ -128,9 +95,6 @@ function computeCompoundBaseline(fertilizers, requirement) {
     };
   });
 
-  // The "conventional" farmer is assumed to reach for whichever general
-  // compound is cheapest overall for their situation — this gives the
-  // baseline the benefit of the doubt rather than assuming the worst choice.
   options.sort((a, b) => a.costLKR - b.costLKR);
   const chosen = options[0];
 

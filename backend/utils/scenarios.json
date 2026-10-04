@@ -1,0 +1,2196 @@
+[
+  {
+    "id": 1,
+    "crop": "Cabbage",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 120,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 75326.09,
+      "mix": {
+        "Urea": 260.87,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 2,
+    "crop": "Cabbage",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 132,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 79108.7,
+      "mix": {
+        "Urea": 286.96,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 3,
+    "crop": "Cabbage",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 144,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 82891.3,
+      "mix": {
+        "Urea": 313.04,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 4,
+    "crop": "Carrot",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 80,
+      "p": 60,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 75717.39,
+      "mix": {
+        "Urea": 173.91,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 5,
+    "crop": "Carrot",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 88,
+      "p": 60,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 78239.13,
+      "mix": {
+        "Urea": 191.3,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 6,
+    "crop": "Carrot",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 96,
+      "p": 60,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 80760.87,
+      "mix": {
+        "Urea": 208.7,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 7,
+    "crop": "Leeks",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 100,
+      "p": 50,
+      "k": 80
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 72521.74,
+      "mix": {
+        "Urea": 217.39,
+        "Muriate of Potash (MOP)": 133.33,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 8,
+    "crop": "Leeks",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 110,
+      "p": 50,
+      "k": 80
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 75673.91,
+      "mix": {
+        "Urea": 239.13,
+        "Muriate of Potash (MOP)": 133.33,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 9,
+    "crop": "Leeks",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 120,
+      "p": 50,
+      "k": 80
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 78826.09,
+      "mix": {
+        "Urea": 260.87,
+        "Muriate of Potash (MOP)": 133.33,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 10,
+    "crop": "Beetroot",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 90,
+      "p": 50,
+      "k": 90
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 72619.57,
+      "mix": {
+        "Urea": 195.65,
+        "Muriate of Potash (MOP)": 150,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 11,
+    "crop": "Beetroot",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 99,
+      "p": 50,
+      "k": 90
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 75456.52,
+      "mix": {
+        "Urea": 215.22,
+        "Muriate of Potash (MOP)": 150,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 12,
+    "crop": "Beetroot",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 108,
+      "p": 50,
+      "k": 90
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 78293.48,
+      "mix": {
+        "Urea": 234.78,
+        "Muriate of Potash (MOP)": 150,
+        "Rock Phosphate": 166.67
+      }
+    }
+  },
+  {
+    "id": 13,
+    "crop": "Tomato",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 150,
+      "p": 80,
+      "k": 120
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 110282.61,
+      "mix": {
+        "Urea": 326.09,
+        "Muriate of Potash (MOP)": 200,
+        "Rock Phosphate": 266.67
+      }
+    }
+  },
+  {
+    "id": 14,
+    "crop": "Tomato",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 165,
+      "p": 80,
+      "k": 120
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 115010.87,
+      "mix": {
+        "Urea": 358.7,
+        "Muriate of Potash (MOP)": 200,
+        "Rock Phosphate": 266.67
+      }
+    }
+  },
+  {
+    "id": 15,
+    "crop": "Tomato",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 180,
+      "p": 80,
+      "k": 120
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 119739.13,
+      "mix": {
+        "Urea": 391.3,
+        "Muriate of Potash (MOP)": 200,
+        "Rock Phosphate": 266.67
+      }
+    }
+  },
+  {
+    "id": 16,
+    "crop": "Potato",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 130,
+      "p": 90,
+      "k": 140
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 113478.26,
+      "mix": {
+        "Urea": 282.61,
+        "Muriate of Potash (MOP)": 233.33,
+        "Rock Phosphate": 300
+      }
+    }
+  },
+  {
+    "id": 17,
+    "crop": "Potato",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 143,
+      "p": 90,
+      "k": 140
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 117576.09,
+      "mix": {
+        "Urea": 310.87,
+        "Muriate of Potash (MOP)": 233.33,
+        "Rock Phosphate": 300
+      }
+    }
+  },
+  {
+    "id": 18,
+    "crop": "Potato",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 156,
+      "p": 90,
+      "k": 140
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 121673.91,
+      "mix": {
+        "Urea": 339.13,
+        "Muriate of Potash (MOP)": 233.33,
+        "Rock Phosphate": 300
+      }
+    }
+  },
+  {
+    "id": 19,
+    "crop": "Beans",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 60,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 56413.04,
+      "mix": {
+        "Urea": 130.43,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 20,
+    "crop": "Beans",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 66,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 58304.35,
+      "mix": {
+        "Urea": 143.48,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 21,
+    "crop": "Beans",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 72,
+      "p": 60,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 60195.65,
+      "mix": {
+        "Urea": 156.52,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 200
+      }
+    }
+  },
+  {
+    "id": 22,
+    "crop": "Cauliflower",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 130,
+      "p": 70,
+      "k": 70
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 84728.26,
+      "mix": {
+        "Urea": 282.61,
+        "Muriate of Potash (MOP)": 116.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 23,
+    "crop": "Cauliflower",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 143,
+      "p": 70,
+      "k": 70
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 88826.09,
+      "mix": {
+        "Urea": 310.87,
+        "Muriate of Potash (MOP)": 116.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 24,
+    "crop": "Cauliflower",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 156,
+      "p": 70,
+      "k": 70
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 92923.91,
+      "mix": {
+        "Urea": 339.13,
+        "Muriate of Potash (MOP)": 116.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 25,
+    "crop": "Radish",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 60,
+      "p": 40,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 50413.04,
+      "mix": {
+        "Urea": 130.43,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 133.33
+      }
+    }
+  },
+  {
+    "id": 26,
+    "crop": "Radish",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 66,
+      "p": 40,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 52304.35,
+      "mix": {
+        "Urea": 143.48,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 133.33
+      }
+    }
+  },
+  {
+    "id": 27,
+    "crop": "Radish",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 72,
+      "p": 40,
+      "k": 60
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 54195.65,
+      "mix": {
+        "Urea": 156.52,
+        "Muriate of Potash (MOP)": 100,
+        "Rock Phosphate": 133.33
+      }
+    }
+  },
+  {
+    "id": 28,
+    "crop": "Capsicum",
+    "rain": "low",
+    "soil": "",
+    "req": {
+      "n": 110,
+      "p": 70,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 88173.91,
+      "mix": {
+        "Urea": 239.13,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 29,
+    "crop": "Capsicum",
+    "rain": "moderate",
+    "soil": "",
+    "req": {
+      "n": 121,
+      "p": 70,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 91641.3,
+      "mix": {
+        "Urea": 263.04,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 30,
+    "crop": "Capsicum",
+    "rain": "heavy",
+    "soil": "",
+    "req": {
+      "n": 132,
+      "p": 70,
+      "k": 100
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      },
+      {
+        "name": "Rock Phosphate",
+        "cost": 90,
+        "n": 0,
+        "p": 30,
+        "k": 0
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 95108.7,
+      "mix": {
+        "Urea": 286.96,
+        "Muriate of Potash (MOP)": 166.67,
+        "Rock Phosphate": 233.33
+      }
+    }
+  },
+  {
+    "id": 31,
+    "crop": "Carrot",
+    "rain": "low",
+    "soil": "Sandy Soil",
+    "req": {
+      "n": 92,
+      "p": 60,
+      "k": 115
+    },
+    "fertilizers": [
+      {
+        "name": "Urea",
+        "cost": 145,
+        "n": 46,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "Triple Super Phosphate (TSP)",
+        "cost": 210,
+        "n": 0,
+        "p": 45,
+        "k": 0
+      },
+      {
+        "name": "Muriate of Potash (MOP)",
+        "cost": 195,
+        "n": 0,
+        "p": 0,
+        "k": 60
+      },
+      {
+        "name": "Ammonium Sulphate",
+        "cost": 110,
+        "n": 21,
+        "p": 0,
+        "k": 0
+      },
+      {
+        "name": "NPK 10:10:20 Compound",
+        "cost": 160,
+        "n": 10,
+        "p": 10,
+        "k": 20
+      },
+      {
+        "name": "NPK 15:15:15 Compound",
+        "cost": 155,
+        "n": 15,
+        "p": 15,
+        "k": 15
+      }
+    ],
+    "js": {
+      "status": "optimal",
+      "cost": 89961.96,
+      "mix": {
+        "Urea": 69.57,
+        "Muriate of Potash (MOP)": 91.67,
+        "NPK 15:15:15 Compound": 400
+      }
+    }
+  }
+]
