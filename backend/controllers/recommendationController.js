@@ -5,12 +5,21 @@ const Crop = require("../models/Crop");
 const Fertilizer = require("../models/Fertilizer");
 const User = require("../models/User");
 const { solveFertilizerMix } = require("../utils/lpSolver");
-const { classifyRainfall, fetchRainfallMm } = require("../utils/rainfall");
+const {
+  classifyRainfall,
+  fetchRainfallMm,
+  RAINFALL_BANDS,
+  RAINFALL_LOOKBACK_DAYS,
+} = require("../utils/rainfall");
 const {
   computeStraightFertilizerBaseline,
   computeCompoundBaseline,
   computeSavings,
 } = require("../utils/baselineComparison");
+
+// Manual override is for officers, or for demos when explicitly enabled in .env
+const canUseManualRainfall = (user) =>
+  user.role === "officer" || process.env.ALLOW_MANUAL_RAINFALL === "true";
 
 exports.generateRecommendation = async (req, res) => {
   try {
@@ -35,7 +44,20 @@ exports.generateRecommendation = async (req, res) => {
       return res.status(400).json({ message: "No active fertilizers configured in the system" });
     }
 
-    const rainfallMm = await fetchRainfallMm(farm.region, rainfallMmOverride);
+    let override;
+    if (rainfallMmOverride !== undefined && rainfallMmOverride !== null) {
+      if (!canUseManualRainfall(req.user)) {
+        return res.status(403).json({ message: "Manual rainfall override is not permitted" });
+      }
+      override = Number(rainfallMmOverride);
+      if (!Number.isFinite(override) || override < 0 || override > 1000) {
+        return res
+          .status(400)
+          .json({ message: "rainfallMmOverride must be a number between 0 and 1000" });
+      }
+    }
+
+    const { rainfallMm, source: rainfallSource } = await fetchRainfallMm(farm, override);
     const { class: rainfallClass, multiplier } = classifyRainfall(rainfallMm);
 
     const adjustedRequirement = {
@@ -75,6 +97,8 @@ exports.generateRecommendation = async (req, res) => {
       crop: crop._id,
       rainfallClass,
       nitrogenLeachingMultiplier: multiplier,
+      rainfallMm,
+      rainfallSource,
       adjustedRequirementKgPerHa: adjustedRequirement,
       fertilizerMix: solverResult.mix.map((m) => ({
         fertilizer: m.fertilizerId,
@@ -320,6 +344,11 @@ exports.downloadRecommendationPdf = async (req, res) => {
     );
     y += 14;
     doc.text(
+      `Rainfall used: ${rec.rainfallMm ?? "\u2014"} mm (${rec.rainfallSource || "not recorded"})`,
+      LEFT, y
+    );
+    y += 14;
+    doc.text(
       `Adjusted requirement: N ${rec.adjustedRequirementKgPerHa?.n ?? "\u2014"} / P ${rec.adjustedRequirementKgPerHa?.p ?? "\u2014"} / K ${rec.adjustedRequirementKgPerHa?.k ?? "\u2014"} kg/ha`,
       LEFT, y
     );
@@ -421,4 +450,21 @@ exports.downloadRecommendationPdf = async (req, res) => {
     }
     res.status(500).json({ message: "Failed to generate PDF", error: err.message });
   }
+};
+
+/**
+ * Rainfall bands and override policy, so the frontend slider preview always
+ * matches the server. JSON cannot represent Infinity (it becomes null), so
+ * the open-ended band is sent as maxMm: null explicitly.
+ */
+exports.getRainfallConfig = (req, res) => {
+  res.json({
+    lookbackDays: RAINFALL_LOOKBACK_DAYS,
+    bands: RAINFALL_BANDS.map((b) => ({
+      class: b.class,
+      maxMm: Number.isFinite(b.maxMm) ? b.maxMm : null,
+      multiplier: b.multiplier,
+    })),
+    manualOverrideAllowed: canUseManualRainfall(req.user),
+  });
 };

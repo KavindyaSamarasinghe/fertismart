@@ -4,10 +4,9 @@
  * Simplex optimizer runs.
  *
  * Rainfall data is sourced from Open-Meteo (https://open-meteo.com), a free
- * weather API that requires no API key. Rather than a single instantaneous
- * reading, this uses the sum of daily precipitation over the past few days
- * (RAINFALL_LOOKBACK_DAYS), which is a more defensible proxy for recent
- * soil moisture / leaching conditions than a one-hour snapshot.
+ * weather API that requires no API key. It sums daily precipitation over the
+ * past RAINFALL_LOOKBACK_DAYS days, using the farm's own coordinates when
+ * valid, otherwise the region centre.
  */
 
 const RAINFALL_BANDS = [
@@ -16,9 +15,9 @@ const RAINFALL_BANDS = [
   { class: "heavy", maxMm: Infinity, multiplier: 1.2 },
 ];
 
-// How many past days of rainfall to sum. 5 days is a reasonable window for
-// recent leaching risk without being overly sensitive to a single storm.
 const RAINFALL_LOOKBACK_DAYS = 5;
+const FETCH_TIMEOUT_MS = 5000;
+const FALLBACK_MM = 60;
 
 const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -27,36 +26,55 @@ const REGION_COORDS = {
   Bandarawela: { lat: 6.8319, lon: 80.9925 },
 };
 
+// Rough bounding box of Sri Lanka. Stops a mistyped coordinate from
+// silently fetching rainfall for somewhere else in the world.
+const SRI_LANKA_BOUNDS = { minLat: 5.8, maxLat: 9.9, minLon: 79.5, maxLon: 82.0 };
+
 function classifyRainfall(rainfallMm) {
   if (typeof rainfallMm !== "number" || rainfallMm < 0) {
     throw new Error("rainfallMm must be a non-negative number");
   }
-  const band = RAINFALL_BANDS.find((b) => rainfallMm <= b.maxMm);
-  return band;
+  return RAINFALL_BANDS.find((b) => rainfallMm <= b.maxMm);
+}
+
+// Prefer the farm's own coordinates; otherwise use the region centre.
+function resolveCoords(farm) {
+  const lat = Number(farm?.location?.lat);
+  const lon = Number(farm?.location?.lng);
+
+  const valid =
+    farm?.location?.lat != null &&
+    farm?.location?.lng != null &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lon) &&
+    lat >= SRI_LANKA_BOUNDS.minLat &&
+    lat <= SRI_LANKA_BOUNDS.maxLat &&
+    lon >= SRI_LANKA_BOUNDS.minLon &&
+    lon <= SRI_LANKA_BOUNDS.maxLon;
+
+  if (valid) return { lat, lon };
+  return REGION_COORDS[farm?.region] || REGION_COORDS["Nuwara Eliya"];
 }
 
 /**
- * Returns the total rainfall (mm) over the past RAINFALL_LOOKBACK_DAYS days
- * for the given region. If a manual override is supplied (e.g. from a form
- * field for testing/demo purposes), that value is used directly and no API
- * call is made. On any API failure, falls back to a fixed moderate value so
- * a recommendation can still be generated, and logs a warning so the
- * fallback is visible in server logs rather than silent.
+ * Returns { rainfallMm, source } where source is "live" | "manual" | "fallback".
  */
-async function fetchRainfallMm(region, manualOverrideMm) {
+async function fetchRainfallMm(farm, manualOverrideMm) {
   if (typeof manualOverrideMm === "number") {
-    return manualOverrideMm;
+    return { rainfallMm: manualOverrideMm, source: "manual" };
   }
 
-  const coords = REGION_COORDS[region] || REGION_COORDS["Nuwara Eliya"];
-
+  const coords = resolveCoords(farm);
   const url =
     `${OPEN_METEO_BASE_URL}?latitude=${coords.lat}&longitude=${coords.lon}` +
     `&daily=precipitation_sum&past_days=${RAINFALL_LOOKBACK_DAYS}&forecast_days=1` +
     `&timezone=Asia%2FColombo`;
 
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) {
       throw new Error(`Open-Meteo request failed with status ${response.status}`);
     }
@@ -67,19 +85,28 @@ async function fetchRainfallMm(region, manualOverrideMm) {
       throw new Error("Open-Meteo response did not include daily precipitation data");
     }
 
-    // Sum the past-days portion only (exclude today's forecast day, since
-    // that's a prediction rather than rainfall that has actually occurred).
-    const pastDaysValues = dailyValues.slice(0, RAINFALL_LOOKBACK_DAYS);
-    const totalMm = pastDaysValues.reduce((sum, v) => sum + (Number(v) || 0), 0);
+    // Past days only; the last entry is today's forecast, not observed rain.
+    const pastDays = dailyValues.slice(0, RAINFALL_LOOKBACK_DAYS);
+    const totalMm = pastDays.reduce((sum, v) => sum + (Number(v) || 0), 0);
 
-    return Math.round(totalMm * 100) / 100;
+    return { rainfallMm: Math.round(totalMm * 100) / 100, source: "live" };
   } catch (err) {
+    const reason =
+      err.name === "AbortError" ? `timed out after ${FETCH_TIMEOUT_MS} ms` : err.message;
     console.warn(
-      `[rainfall] Failed to fetch live rainfall for "${region}" (${err.message}); ` +
-        `defaulting to 60mm (moderate).`
+      `[rainfall] Live rainfall unavailable for "${farm?.region}" (${reason}); ` +
+        `using fallback of ${FALLBACK_MM} mm.`
     );
-    return 60;
+    return { rainfallMm: FALLBACK_MM, source: "fallback" };
+  } finally {
+    clearTimeout(timer); // always release the timer
   }
 }
 
-module.exports = { classifyRainfall, fetchRainfallMm, RAINFALL_BANDS, RAINFALL_LOOKBACK_DAYS };
+module.exports = {
+  classifyRainfall,
+  fetchRainfallMm,
+  RAINFALL_BANDS,
+  RAINFALL_LOOKBACK_DAYS,
+  FALLBACK_MM,
+};

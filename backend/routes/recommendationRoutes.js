@@ -7,6 +7,7 @@ const {
   reviewRecommendation,
   downloadRecommendationPdf,
   reviewHistory,
+  getRainfallConfig,
 } = require("../controllers/recommendationController");
 const { protect, authorize } = require("../middleware/auth");
 
@@ -57,6 +58,18 @@ router.post("/", protect, authorize("farmer", "officer"), generateRecommendation
  *         description: Forbidden — Farmer role required
  */
 router.get("/mine", protect, authorize("farmer"), myRecommendations);
+
+/**
+ * @swagger
+ * /recommendations/rainfall-config:
+ *   get:
+ *     summary: Rainfall bands, multipliers and whether manual override is allowed for the caller
+ *     tags: [Recommendations]
+ *     responses:
+ *       200:
+ *         description: Rainfall configuration (last band has maxMm null = no upper limit)
+ */
+router.get("/rainfall-config", protect, authorize("farmer", "officer"), getRainfallConfig);
 
 /**
  * @swagger

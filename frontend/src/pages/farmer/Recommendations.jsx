@@ -7,6 +7,7 @@ import usePagination from "../../hooks/usePagination.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 import PdfButton from "../../components/PdfButton";
+import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
 
 const STATUS_STYLES = {
   pending_review: "bg-amber-50 text-amber-700 border-amber-200",
@@ -42,15 +43,25 @@ const formatStatus = (status) =>
     .replaceAll("_", " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-// Mirrors backend/utils/rainfall.js RAINFALL_BANDS exactly, so the slider's
-// live label matches what the server will actually classify it as.
-const RAINFALL_BANDS = [
-  { class: "low", maxMm: 50, multiplier: 1.0, style: "bg-amber-50 text-amber-700 border-amber-200" },
-  { class: "moderate", maxMm: 150, multiplier: 1.1, style: "bg-emerald-50 text-emerald-700 border-emerald-200" },
-  { class: "heavy", maxMm: Infinity, multiplier: 1.2, style: "bg-blue-50 text-blue-700 border-blue-200" },
-];
-const classifyRainfallClient = (mm) =>
-  RAINFALL_BANDS.find((b) => mm <= b.maxMm) || RAINFALL_BANDS[RAINFALL_BANDS.length - 1];
+// Styling stays in the frontend; thresholds and multipliers come from the API
+const BAND_STYLES = {
+  low: "bg-amber-50 text-amber-700 border-amber-200",
+  moderate: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  heavy: "bg-blue-50 text-blue-700 border-blue-200",
+};
+
+// Used only until the API responds, or if it fails. maxMm: null means "no upper limit".
+const DEFAULT_RAINFALL_CONFIG = {
+  bands: [
+    { class: "low", maxMm: 50, multiplier: 1.0 },
+    { class: "moderate", maxMm: 150, multiplier: 1.1 },
+    { class: "heavy", maxMm: null, multiplier: 1.2 },
+  ],
+  manualOverrideAllowed: false,
+};
+
+const classifyRainfallClient = (bands, mm) =>
+  bands.find((b) => b.maxMm === null || mm <= b.maxMm) || bands[bands.length - 1];
 const SLIDER_MAX_MM = 250;
 
 function Icon({ name, className = "h-5 w-5" }) {
@@ -204,6 +215,7 @@ export default function Recommendations() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [pageError, setPageError] = useState("");
   const [result, setResult] = useState(null);
+  const [rainfallConfig, setRainfallConfig] = useState(DEFAULT_RAINFALL_CONFIG);
 
   // History pagination (5 cards per page; newest first from the API)
   const {
@@ -242,13 +254,15 @@ export default function Recommendations() {
       try {
         setPageError("");
 
-        const [farmsRes, cropsRes, recsRes] = await Promise.all([
+        const [farmsRes, cropsRes, recsRes, configRes] = await Promise.all([
           apiClient.get("/farms/mine"),
           apiClient.get("/crops"),
           apiClient.get("/recommendations/mine"),
+          apiClient.get("/recommendations/rainfall-config").catch(() => null), // non-critical
         ]);
 
         if (!active) return;
+        if (configRes?.data) setRainfallConfig(configRes.data);
 
         const loadedFarms = farmsRes.data.farms || [];
 
@@ -308,7 +322,7 @@ export default function Recommendations() {
       const payload = {
         farmId: form.farmId,
         cropId: form.cropId,
-        ...(form.rainfallMode === "manual" && {
+        ...(form.rainfallMode === "manual" && rainfallConfig.manualOverrideAllowed && {
           rainfallMmOverride: Number(form.rainfallMmOverride),
         }),
       };
@@ -355,7 +369,10 @@ export default function Recommendations() {
     (crop) => crop._id === form.cropId
   );
 
-  const liveBand = classifyRainfallClient(Number(form.rainfallMmOverride) || 0);
+  const liveBand = classifyRainfallClient(
+    rainfallConfig.bands,
+    Number(form.rainfallMmOverride) || 0
+  );
 
   return (
     <DashboardLayout
@@ -597,6 +614,7 @@ export default function Recommendations() {
                       Use live rainfall
                     </span>
                   </button>
+                  {rainfallConfig.manualOverrideAllowed && (
                   <button
                     type="button"
                     onClick={() =>
@@ -610,9 +628,10 @@ export default function Recommendations() {
                   >
                     Manual override
                   </button>
+                  )}
                 </div>
 
-                {form.rainfallMode === "auto" ? (
+                {form.rainfallMode === "auto" || !rainfallConfig.manualOverrideAllowed ? (
                   <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-slate-500">
                     <Icon name="cloud" className="mt-0.5 h-4 w-4 shrink-0" />
                     Rainfall for your farm's region is fetched automatically
@@ -649,7 +668,7 @@ export default function Recommendations() {
 
                     <div className="mt-3 flex items-center justify-between rounded-lg bg-white px-3 py-2">
                       <span
-                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${liveBand.style}`}
+                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold capitalize ${BAND_STYLES[liveBand.class]}`}
                       >
                         {liveBand.class} rainfall
                       </span>
@@ -798,6 +817,9 @@ export default function Recommendations() {
                           <p className="mt-2 font-semibold capitalize text-[#1C2D35]">
                             {rec.rainfallClass || "Not available"}
                           </p>
+                          <div className="mt-2">
+                            <RainfallSourceBadge source={rec.rainfallSource} mm={rec.rainfallMm} />
+                          </div>
                         </div>
 
                         <div className="rounded-xl bg-slate-50 p-4">
@@ -941,6 +963,9 @@ export default function Recommendations() {
                   <p className="mt-2 font-semibold capitalize text-[#1C2D35]">
                     {result.rainfallClass || "Not available"}
                   </p>
+                  <div className="mt-2">
+                    <RainfallSourceBadge source={result.rainfallSource} mm={result.rainfallMm} />
+                  </div>
                 </div>
 
                 <div className="rounded-xl border border-slate-200 p-4">

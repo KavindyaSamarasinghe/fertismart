@@ -13,6 +13,11 @@ const RecommendationSchema = new mongoose.Schema(
     },
     nitrogenLeachingMultiplier: { type: Number, required: true },
 
+    // Rainfall figure actually used, and where it came from. No default on
+    // purpose: older records have no source and must not be labelled "live".
+    rainfallMm: { type: Number },
+    rainfallSource: { type: String, enum: ["live", "manual", "fallback"] },
+
     adjustedRequirementKgPerHa: {
       n: Number,
       p: Number,

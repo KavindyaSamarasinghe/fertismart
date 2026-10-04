@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import PdfButton from "../../components/PdfButton.jsx";
+import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -253,6 +254,9 @@ export default function ReviewHistory() {
                                     <p>
                                       Rainfall: <span className="font-semibold capitalize text-slate-700">{rec.rainfallClass}</span>
                                     </p>
+                                    <div className="col-span-2">
+                                      <RainfallSourceBadge source={rec.rainfallSource} mm={rec.rainfallMm} showWarning={false} />
+                                    </div>
                                     <p>
                                       N multiplier: <span className="font-semibold text-slate-700">×{rec.nitrogenLeachingMultiplier}</span>
                                     </p>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DashboardLayout from "../../components/DashboardLayout.jsx";
 import apiClient from "../../api/axiosClient.js";
 import { useToast, errorMessage } from "../../context/ToastContext.jsx";
+import RainfallSourceBadge from "../../components/RainfallSourceBadge.jsx";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 
 const formatCurrency = (amount) =>
@@ -442,6 +443,9 @@ export default function OfficerDashboard() {
                         >
                           {rec.rainfallClass || "Not available"}
                         </span>
+                        <div className="mt-2">
+                          <RainfallSourceBadge source={rec.rainfallSource} mm={rec.rainfallMm} />
+                        </div>
                       </div>
 
                       <div className="rounded-xl border border-slate-200 p-3.5">

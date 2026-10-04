@@ -22,6 +22,8 @@ const INITIAL_FORM = {
   areaHectares: "",
   soilType: "",
   customSoilType: "",
+  lat: "",
+  lng: "",
 };
 
 function Icon({ type, className = "h-5 w-5" }) {
@@ -150,6 +152,23 @@ export default function FarmerDashboard() {
     }));
   };
 
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location is not supported by this browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) =>
+        setForm((prev) => ({
+          ...prev,
+          lat: pos.coords.latitude.toFixed(5),
+          lng: pos.coords.longitude.toFixed(5),
+        })),
+      () => toast.error("Could not get your location. You can enter coordinates manually."),
+      { timeout: 10000 }
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -171,6 +190,9 @@ export default function FarmerDashboard() {
         region: form.region,
         areaHectares: Number(form.areaHectares),
         soilType: actualSoilType,
+        ...(form.lat !== "" && form.lng !== "" && {
+          location: { lat: Number(form.lat), lng: Number(form.lng) },
+        }),
       });
 
       toast.success(`${form.farmName.trim() || "Farm"} added successfully.`);
@@ -422,6 +444,47 @@ export default function FarmerDashboard() {
                     </p>
                   </div>
                 )}
+
+                {/* Optional farm coordinates, used for location-specific rainfall */}
+                <div className="sm:col-span-2">
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="text-sm font-medium text-slate-700">
+                      Farm coordinates
+                      <span className="ml-1 font-normal text-slate-400">(optional)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleUseMyLocation}
+                      className="text-xs font-semibold text-[#145C3B] hover:underline"
+                    >
+                      Use my current location
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      name="lat"
+                      type="number"
+                      step="any"
+                      placeholder="Latitude e.g. 6.9497"
+                      value={form.lat}
+                      onChange={handleChange}
+                      className={inputClass}
+                    />
+                    <input
+                      name="lng"
+                      type="number"
+                      step="any"
+                      placeholder="Longitude e.g. 80.7891"
+                      value={form.lng}
+                      onChange={handleChange}
+                      className={inputClass}
+                    />
+                  </div>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Used to fetch rainfall for your exact location. Use this only while you are
+                    at the farm. Leave blank to use your region's centre.
+                  </p>
+                </div>
               </div>
 
               <div className="mt-6 flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">

@@ -33,8 +33,8 @@ const FarmSchema = new mongoose.Schema(
     },
 
     location: {
-      lat: { type: Number },
-      lng: { type: Number },
+      lat: { type: Number, min: -90, max: 90 },
+      lng: { type: Number, min: -180, max: 180 },
     },
   },
   { timestamps: true }
