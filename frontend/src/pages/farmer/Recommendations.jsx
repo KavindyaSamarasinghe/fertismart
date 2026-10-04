@@ -871,6 +871,35 @@ export default function Recommendations() {
                         </div>
                       )}
 
+                      {/* Officer decision and notes */}
+                      {(rec.status === "approved" || rec.status === "rejected") && (
+                        <div
+                          className={`mt-4 rounded-xl border p-4 ${
+                            rec.status === "approved"
+                              ? "border-emerald-200 bg-emerald-50"
+                              : "border-red-200 bg-red-50"
+                          }`}
+                        >
+                          <p
+                            className={`text-xs font-semibold uppercase tracking-wide ${
+                              rec.status === "approved" ? "text-emerald-800" : "text-red-800"
+                            }`}
+                          >
+                            Officer feedback
+                          </p>
+                          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">
+                            {rec.reviewNotes?.trim()
+                              ? rec.reviewNotes
+                              : "The officer did not add any notes."}
+                          </p>
+                          <p className="mt-2 text-xs text-slate-500">
+                            {formatStatus(rec.status)}
+                            {rec.reviewedBy?.name ? ` by ${rec.reviewedBy.name}` : ""}
+                            {rec.reviewedAt ? ` on ${formatDate(rec.reviewedAt)}` : ""}
+                          </p>
+                        </div>
+                      )}
+
                       {/* Total cost + savings + actions */}
                       <div className="mt-4 flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>

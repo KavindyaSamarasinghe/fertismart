@@ -129,6 +129,7 @@ exports.generateRecommendation = async (req, res) => {
 exports.myRecommendations = async (req, res) => {
   const recs = await Recommendation.find({ farmer: req.user._id })
     .populate("crop", "name")
+    .populate("reviewedBy", "name")
     .populate("farm", "farmName region areaHectares")
     .sort({ createdAt: -1 });
   res.json({ recommendations: recs });
@@ -150,12 +151,17 @@ exports.reviewRecommendation = async (req, res) => {
       return res.status(400).json({ message: "decision must be 'approved' or 'rejected'" });
     }
 
+    const notes = typeof reviewNotes === "string" ? reviewNotes.trim() : "";
+    if (decision === "rejected" && !notes) {
+      return res.status(400).json({ message: "Review notes are required when rejecting a recommendation" });
+    }
+
     const recommendation = await Recommendation.findById(req.params.id);
     if (!recommendation) return res.status(404).json({ message: "Recommendation not found" });
 
     recommendation.status = decision;
     recommendation.reviewedBy = req.user._id;
-    recommendation.reviewNotes = reviewNotes || "";
+    recommendation.reviewNotes = notes;
     recommendation.reviewedAt = new Date();
     await recommendation.save();
 

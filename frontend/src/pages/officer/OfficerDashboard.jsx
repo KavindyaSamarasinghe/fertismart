@@ -138,6 +138,10 @@ export default function OfficerDashboard() {
   }, []);
 
   const handleReview = async (id, decision) => {
+    if (decision === "rejected" && !(notes[id] || "").trim()) {
+      toast.error("Please add review notes explaining why you are rejecting this recommendation.");
+      return;
+    }
     setReviewing((prev) => ({ ...prev, [id]: true }));
 
     try {
@@ -573,7 +577,7 @@ export default function OfficerDashboard() {
                       >
                         Review notes
                         <span className="ml-1 font-normal text-slate-400">
-                          (optional)
+                          (required when rejecting)
                         </span>
                       </label>
 

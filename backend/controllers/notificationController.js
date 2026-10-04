@@ -20,7 +20,9 @@ exports.getNotifications = async (req, res) => {
         id: String(r._id),
         type: r.status,
         message: `Your ${r.crop?.name || "crop"} recommendation was ${r.status}`,
-        detail: r.farm?.farmName || r.farm?.region || "",
+        detail: r.reviewNotes?.trim()
+          ? `Officer note: ${r.reviewNotes.trim().slice(0, 80)}${r.reviewNotes.trim().length > 80 ? "..." : ""}`
+          : r.farm?.farmName || r.farm?.region || "",
         createdAt: r.reviewedAt,
         link: "/farmer/recommendations",
       }));
