@@ -21,7 +21,7 @@ const UserSchema = new mongoose.Schema(
     assignedRegions: [{ type: String }],
     isActive: { type: Boolean, default: true },
 
-    // Password reset (only the SHA-256 hash of the token is stored)
+    
     passwordResetToken: { type: String, select: false },
     passwordResetExpires: { type: Date, select: false },
   },
@@ -39,11 +39,11 @@ UserSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Returns the raw token (goes in the email); stores only its hash + expiry
+
 UserSchema.methods.createPasswordResetToken = function () {
   const rawToken = crypto.randomBytes(32).toString("hex");
   this.passwordResetToken = crypto.createHash("sha256").update(rawToken).digest("hex");
-  this.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+  this.passwordResetExpires = Date.now() + 15 * 60 * 1000; 
   return rawToken;
 };
 

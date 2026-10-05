@@ -11,7 +11,7 @@ export default function ConfirmDialog({
   onConfirm,
   onCancel,
 }) {
-  // Close on Escape (unless a request is in progress)
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => {

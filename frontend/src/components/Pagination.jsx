@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Pagination({ page, totalPages, total, pageSize, onChange }) {
-  // Nothing to paginate when everything fits on one page
+
   if (total <= pageSize) return null;
 
   const from = (page - 1) * pageSize + 1;

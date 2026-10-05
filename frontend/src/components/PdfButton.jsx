@@ -5,7 +5,6 @@ export default function PdfButton({ rec }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // A new recommendation starts as pending_review, so the button stays hidden until approval
   if (rec.status !== "approved") return null;
 
   const handleClick = async () => {

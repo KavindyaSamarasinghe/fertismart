@@ -40,14 +40,6 @@ exports.setUserStatus = async (req, res) => {
   res.json({ user: { id: user._id, name: user.name, isActive: user.isActive } });
 };
 
-/**
- * System-wide analytics for the Admin overview dashboard. Aggregates every
- * Recommendation document to summarize review-queue status, cost and
- * savings totals, and breakdowns by crop and region. Intentionally uses a
- * single populate + in-memory reduce, consistent with this codebase's
- * existing style, rather than a Mongo aggregation pipeline — dataset size
- * at this project's scale does not warrant the added complexity.
- */
 exports.getOverview = async (req, res) => {
   const recs = await Recommendation.find({})
     .populate("crop", "name")

@@ -8,7 +8,7 @@ export default function SoilBasis({ rec, className = "" }) {
   const applied = Boolean(rec.soilAdjustmentApplied);
   const m = rec.soilMultipliers || { n: 1, p: 1, k: 1 };
 
-  // Only list nutrients that were actually changed
+
   const changed = ["n", "p", "k"]
     .filter((k) => Number(m[k]) !== 1)
     .map((k) => `${k.toUpperCase()} ×${fmt(m[k])}`);

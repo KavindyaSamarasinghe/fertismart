@@ -111,7 +111,6 @@ API docs: http://localhost:5000/api-docs
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | Production | SMTP settings for password-reset email. If `SMTP_HOST` is not set, an Ethereal test inbox is used and a preview URL is printed in the server console |
 | `EMAIL_FROM` | No | Sender address for outgoing email |
 
-> **Security:** never commit `.env` (it is listed in `.gitignore`). Commit a `.env.example` containing placeholder values only.
 
 ### Demo accounts created by the seed script
 

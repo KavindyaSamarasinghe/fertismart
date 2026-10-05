@@ -16,9 +16,9 @@ const fertilizers = [
   { _id: "rockphos", name: "Rock Phosphate", type: "Phosphorus", costPerKgLKR: 90, nutrientContentPercent: { n: 0, p: 30, k: 0 } },
 ];
 
-// Same requirement as the real test recommendation (Carrot, 1ha equivalent shown scaled):
+
 const requirement = { n: 80, p: 60, k: 100 };
-// (This exactly matches the real "n:80, p:60, k:100" from your Network tab response.)
+
 
 console.log("=== Straight-fertilizer baseline ===");
 const straight = computeStraightFertilizerBaseline(fertilizers, requirement);
@@ -28,7 +28,7 @@ console.log("\n=== Compound baseline (recommended primary comparison) ===");
 const compound = computeCompoundBaseline(fertilizers, requirement);
 console.log(JSON.stringify(compound, null, 2));
 
-// This is the actual optimized cost from your real API response
+
 const optimizedCostFromRealTest = 75717.39;
 
 console.log("\n=== Savings vs each baseline ===");

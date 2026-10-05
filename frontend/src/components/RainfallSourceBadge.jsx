@@ -13,7 +13,7 @@ const LABELS = {
 };
 
 export default function RainfallSourceBadge({ source, mm, showWarning = true }) {
-  if (!source) return null; // older recommendations have no source recorded
+  if (!source) return null; 
 
   return (
     <div>

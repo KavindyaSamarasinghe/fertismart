@@ -10,7 +10,6 @@ const Icon = ({ children, className = "h-4 w-4" }) => (
   </svg>
 );
 
-// Deterministic pastel badge colour per soil type, so the same type always looks the same
 const BADGE_PALETTE = [
   "bg-emerald-100 text-emerald-700",
   "bg-orange-100 text-orange-700",
@@ -45,7 +44,6 @@ export default function FarmsOverview() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [region]);
 
   const filtered = useMemo(() => {
@@ -58,7 +56,7 @@ export default function FarmsOverview() {
 
   const { page, setPage, totalPages, pageItems, total, pageSize } = usePagination(filtered, 10);
 
-  // Return to page 1 whenever the filters change
+ 
   useEffect(() => {
     setPage(1);
   }, [search, region, setPage]);

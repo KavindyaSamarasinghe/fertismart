@@ -42,7 +42,7 @@ export default function FertilizersAdmin() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, []);
 
   const handleSubmit = async (e) => {

@@ -76,10 +76,8 @@ exports.getProfile = async (req, res) => {
   res.json({ user: sanitizeUser(req.user) });
 };
 
-// ---------- Password reset ----------
 
 exports.forgotPassword = async (req, res) => {
-  // Same response whether or not the email exists, to prevent account enumeration
   const generic = {
     message: "If an account with that email exists, a reset link has been sent.",
   };
@@ -107,7 +105,6 @@ exports.forgotPassword = async (req, res) => {
                <p>If you didn't request this, you can ignore this email.</p>`,
       });
     } catch (mailErr) {
-      // Don't leave a usable token behind if the email couldn't be sent
       user.passwordResetToken = undefined;
       user.passwordResetExpires = undefined;
       await user.save({ validateBeforeSave: false });
@@ -138,7 +135,7 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Reset link is invalid or has expired" });
     }
 
-    user.password = password; // pre-save hook hashes it
+    user.password = password; 
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save();

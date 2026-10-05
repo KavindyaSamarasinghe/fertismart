@@ -1,11 +1,3 @@
-/**
- * Soil-type adjustment for the fertilizer optimizer.
- *
- * IMPORTANT: every number below is a PLACEHOLDER that shows the structure.
- * Replace them with figures from DOA/HORDI recommendations or Natural
- * Resources Management Centre soil publications, and cite the source in
- * your thesis.
- */
 const SOIL_PROFILES = {
   "Red-Yellow Podzolic": {
     multipliers: { n: 1.0, p: 1.15, k: 1.05 },
@@ -55,14 +47,14 @@ const NEUTRAL = {
 function getSoilAdjustment(soilType) {
   const wanted = String(soilType || "").trim().toLowerCase();
   const key = Object.keys(SOIL_PROFILES).find((k) => k.toLowerCase() === wanted);
-  // Blank, "Other" or custom soil types stay neutral instead of guessing
+
   return key ? { ...SOIL_PROFILES[key], matched: true, soilType: key } : { ...NEUTRAL };
 }
 
 function filterFertilizersForSoil(fertilizers, soil) {
   if (!soil.excludeFertilizers.length) return fertilizers;
   const filtered = fertilizers.filter((f) => !soil.excludeFertilizers.includes(f.name));
-  return filtered.length ? filtered : fertilizers; // never leave the solver empty
+  return filtered.length ? filtered : fertilizers; 
 }
 
 module.exports = { getSoilAdjustment, filterFertilizersForSoil, SOIL_PROFILES };

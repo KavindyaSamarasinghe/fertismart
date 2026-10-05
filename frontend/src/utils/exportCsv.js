@@ -1,4 +1,4 @@
-// Neutralise spreadsheet formulas (=, +, -, @) in text cells
+
 function escapeCell(value) {
   if (value === null || value === undefined) return "";
   let str = String(value);
@@ -13,17 +13,13 @@ function escapeCell(value) {
   return str;
 }
 
-/**
- * columns: [{ header: "Name", value: (row) => row.name }, ...]
- * rows: array of objects
- */
+
 export function downloadCsv(baseName, columns, rows) {
   const lines = [
     columns.map((c) => escapeCell(c.header)).join(","),
     ...rows.map((row) => columns.map((c) => escapeCell(c.value(row))).join(",")),
   ];
 
-  // BOM so Excel reads UTF-8 correctly; CRLF line endings for compatibility
   const csv = "\uFEFF" + lines.join("\r\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
 

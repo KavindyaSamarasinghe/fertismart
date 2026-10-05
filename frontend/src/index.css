@@ -1,29 +1,29 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 html {
-scroll-behavior: smooth;
-font-size: 112.5%; /* 18px base instead of 16px: scales all text and spacing */
+  scroll-behavior: smooth;
+  font-size: 112.5%;
 }
 
 body {
-margin: 0;
-font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
-background-color: #F4F8F4;
-color: #1C2D35;
--webkit-font-smoothing: antialiased;
--moz-osx-font-smoothing: grayscale;
+  margin: 0;
+  font-family: "Inter", "Noto Sans Sinhala", "Noto Sans Tamil", ui-sans-serif, system-ui, sans-serif;
+  background-color: #F4F8F4;
+  color: #1C2D35;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
 input {
-font: inherit;
+  font: inherit;
 }
 
 ::selection {
-background-color: #DCEFE1;
-color: #145C3B;
+  background-color: #DCEFE1;
+  color: #145C3B;
 }

@@ -68,7 +68,7 @@ async function fetchRainfallMm(farm, manualOverrideMm) {
       throw new Error("Open-Meteo response did not include daily precipitation data");
     }
 
-    // Past days only; the last entry is today's forecast, not observed rain.
+    
     const pastDays = dailyValues.slice(0, RAINFALL_LOOKBACK_DAYS);
     const totalMm = pastDays.reduce((sum, v) => sum + (Number(v) || 0), 0);
 
@@ -82,7 +82,7 @@ async function fetchRainfallMm(farm, manualOverrideMm) {
     );
     return { rainfallMm: FALLBACK_MM, source: "fallback" };
   } finally {
-    clearTimeout(timer); // always release the timer
+    clearTimeout(timer); 
   }
 }
 

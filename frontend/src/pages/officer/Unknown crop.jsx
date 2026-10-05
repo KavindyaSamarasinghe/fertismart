@@ -8,7 +8,7 @@ const Icon = ({ children, className = "h-4 w-4" }) => (
   </svg>
 );
 
-// Deterministic pastel badge colour per soil type, so the same type always looks the same
+
 const BADGE_PALETTE = [
   "bg-emerald-100 text-emerald-700",
   "bg-orange-100 text-orange-700",

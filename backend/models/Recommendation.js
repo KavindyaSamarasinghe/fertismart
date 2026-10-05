@@ -13,12 +13,11 @@ const RecommendationSchema = new mongoose.Schema(
     },
     nitrogenLeachingMultiplier: { type: Number, required: true },
 
-    // Rainfall figure actually used, and where it came from. No default on
-    // purpose: older records have no source and must not be labelled "live".
+  
     rainfallMm: { type: Number },
     rainfallSource: { type: String, enum: ["live", "manual", "fallback"] },
 
-    // Soil-type adjustment recorded for traceability
+  
     soilType: { type: String, default: "" },
     soilAdjustmentApplied: { type: Boolean, default: false },
     soilMultipliers: {
@@ -49,10 +48,7 @@ const RecommendationSchema = new mongoose.Schema(
       default: "optimal",
     },
 
-    // Baseline comparison: what an unoptimized, straight-fertilizer approach
-    // would have cost for the same nutrient requirement, plus the resulting
-    // savings from LP optimization. Null when no baseline could be computed
-    // (e.g. no fertilizer available for one of the required nutrients).
+   
     baselineCostLKR: { type: Number, default: null },
     savingsLKR: { type: Number, default: null },
     savingsPercent: { type: Number, default: null },

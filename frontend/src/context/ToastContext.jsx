@@ -13,7 +13,7 @@ const ToastContext = createContext(null);
 const DURATIONS = { success: 4000, info: 4000, error: 6000 };
 const MAX_TOASTS = 4;
 
-// Pulls the server's message out of an axios error, with a fallback
+
 export const errorMessage = (err, fallback) => err?.response?.data?.message || fallback;
 
 const STYLES = {

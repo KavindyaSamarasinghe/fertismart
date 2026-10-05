@@ -45,14 +45,14 @@ export default function NotificationBell() {
     }
   }, []);
 
-  // Poll every 30 seconds; clean up on unmount
+  
   useEffect(() => {
     load();
     const timer = setInterval(load, POLL_MS);
     return () => clearInterval(timer);
   }, [load]);
 
-  // Close when clicking outside
+
   useEffect(() => {
     const onClick = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setOpen(false);
@@ -70,7 +70,7 @@ export default function NotificationBell() {
       load();
       const now = Date.now();
       localStorage.setItem(getSeenKey(), String(now));
-      // Keep the badge until the dropdown closes, so the unread items stay highlighted
+    
       setTimeout(() => setLastSeen(now), 0);
     }
   };

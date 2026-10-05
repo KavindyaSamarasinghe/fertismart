@@ -25,7 +25,7 @@ const FarmSchema = new mongoose.Schema(
       min: 0.01,
     },
 
-    // Supports predefined and custom soil types.
+   
     soilType: {
       type: String,
       trim: true,

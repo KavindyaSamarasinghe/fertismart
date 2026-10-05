@@ -13,19 +13,19 @@ const fertilizers = [
 ];
 
 const round2 = (v) => Math.round(v * 100) / 100;
-const carrot = { n: 80, p: 60, k: 100 }; // per ha, low rainfall (x1.0)
+const carrot = { n: 80, p: 60, k: 100 }; 
 
-// 1. Matching is case-insensitive
+
 assert.strictEqual(getSoilAdjustment("sandy soil").soilType, "Sandy Soil");
 
-// 2. Unknown / blank / "Other" soils stay neutral
+
 for (const s of ["Reddish Brown Latosolic", "", undefined, "Other"]) {
   const r = getSoilAdjustment(s);
   assert.strictEqual(r.matched, false);
   assert.deepStrictEqual(r.multipliers, { n: 1, p: 1, k: 1 });
 }
 
-// 3. Requirement scaling
+
 const sandy = getSoilAdjustment("Sandy Soil");
 const req = {
   n: round2(carrot.n * sandy.multipliers.n),
@@ -34,16 +34,16 @@ const req = {
 };
 assert.deepStrictEqual(req, { n: 92, p: 60, k: 115 });
 
-// 4. Fertilizer filtering
+
 const usable = filterFertilizersForSoil(fertilizers, sandy);
 assert.ok(!usable.some((f) => f.name === "Rock Phosphate"));
 assert.strictEqual(usable.length, fertilizers.length - 1);
 
-// 5. Filter never leaves the solver empty
+
 const onlyRock = [fertilizers[6]];
 assert.strictEqual(filterFertilizersForSoil(onlyRock, sandy).length, 1);
 
-// 6. End-to-end through the real LP solver
+
 const neutral = solveFertilizerMix(fertilizers, carrot);
 const sandyResult = solveFertilizerMix(usable, req);
 console.log("Neutral:", neutral.totalCostLKR, neutral.mix.map((m) => m.fertilizerName));

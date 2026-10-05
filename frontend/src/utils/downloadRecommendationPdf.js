@@ -17,7 +17,7 @@ export async function downloadRecommendationPdf(recId) {
     a.remove();
     window.URL.revokeObjectURL(url);
   } catch (err) {
-    // With responseType "blob", error bodies arrive as a Blob, so parse it
+  
     let message = "Failed to download PDF";
     try {
       const text = await err.response?.data?.text();

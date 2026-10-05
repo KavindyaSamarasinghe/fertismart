@@ -1,4 +1,3 @@
-// backend/utils/verify-export.js  (NEW FILE)
 const fs = require("fs");
 const { crops, fertilizers } = require("./seedData");
 const { solveFertilizerMix } = require("./lpSolver");
@@ -13,14 +12,13 @@ const bands = [
 const round2 = (v) => Math.round(v * 100) / 100;
 
 const scenarios = [];
-// 10 crops x 3 rainfall bands = 30 scenarios
 for (const c of crops) {
   for (const b of bands) {
     scenarios.push({ crop: c.name, rain: b.label, soil: "", area: 1,
       mult: b.mult, base: c.npkRequirementKgPerHa });
   }
 }
-// +1 soil scenario = 31
+
 scenarios.push({ crop: "Carrot", rain: "low", soil: "Sandy Soil", area: 1,
   mult: 1.0, base: { n: 80, p: 60, k: 100 } });
 

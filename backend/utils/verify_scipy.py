@@ -1,4 +1,3 @@
-# backend/utils/verify_scipy.py  (NEW FILE)
 import json, numpy as np
 from scipy.optimize import linprog
 
@@ -20,7 +19,7 @@ for s in data:
     js_cost = s["js"]["cost"]
     diff = abs(js_cost - res.fun)
 
-    # Check the JS solution is actually feasible
+   
     q = np.array([s["js"]["mix"].get(x["name"], 0) for x in f])
     supplied = -A @ q
     feasible = np.all(supplied >= -b - TOL_FEAS)
@@ -29,7 +28,7 @@ for s in data:
     passed += ok
     print(f"{s['id']:>3} {s['crop']:<12}{s['rain']:<9}{js_cost:>12.2f}{res.fun:>13.2f}{diff:>8.3f}  {'PASS' if ok else 'FAIL'}")
 
-    # Informational: quantities (can differ legitimately if there are ties)
+
     for x, qs in zip(f, res.x):
         qj = s["js"]["mix"].get(x["name"], 0)
         if abs(qj - qs) > 0.05:
